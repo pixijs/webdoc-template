@@ -1,0 +1,55 @@
+<?js
+const data = obj;
+var self = this;
+var typeSignature = '';
+
+if (data.dataType) {
+    typeSignature += '<span class="type-signature type">';
+    data.dataType.slice(1).forEach(function (name) {
+        typeSignature += self.linkto(name, self.htmlsafe(name));
+        typeSignature += ' | ';
+    });
+    typeSignature = typeSignature.slice(0, -3) + '</span>';
+}
+?>
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="<?js= id ?>">
+            <a class="share-icon" href="#<?js= id ?>"><span class="glyphicon glyphicon-link"></span></a>
+            <span class="<?js= data.deprecated ? 'status-deprecated' : '' ?>"><?js= (data.scope === 'static' ? data.path : data.name) ?></span>
+            <?js= typeSignature ?>
+            <?js if (data.deprecated) { ?>
+                <span class="access-signature deprecated">Deprecated<?js
+                    if (typeof data.deprecated === 'string') { ?>
+                    : <span class="deprecated-info"><?js= data.deprecated ?></span>
+                    <?js }
+                ?>
+                </span>
+            <?js } ?>
+            <?js= data.attribs ?>
+            <?js if (data.inherited) { ?>
+                <span class="access-signature inherited"><?js= "inherits" ?></span>
+            <?js } ?>
+            <?js if (data.overrides) { ?>
+                <span class="access-signature overrides"><?js= "overrides" ?></span>
+            <?js } ?>
+        </h4>
+    </div>
+</dt>
+<dd>
+    <?js if (data.brief) { ?>
+      <p class="description"><?js= data.brief ?></p>
+    <?js } ?>
+    <?js if (data.description) { ?>
+    <div class="description">
+        <?js= data.description ?>
+    </div>
+    <?js } ?>
+
+    <?js= this.partial('details.tmpl', data) ?>
+
+    <?js if (data.examples && examples.length) { ?>
+        <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
+        <?js= this.partial('examples.tmpl', examples) ?>
+    <?js } ?>
+</dd>

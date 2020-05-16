@@ -1,0 +1,46 @@
+{
+  "name": "pixi-webdoc-template",
+  "version": "0.0.26-alpha.0",
+  "description": "Pixi's webdoc site template",
+  "main": "publish.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webdoc-js/pixi-webdoc-template.git"
+  },
+  "keywords": [
+    "pixi.js",
+    "pixi",
+    "webdoc",
+    "documentation"
+  ],
+  "author": "Shukant K. Pal <shukantpal@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webdoc-js/pixi-webdoc-template/issues"
+  },
+  "homepage": "https://github.com/webdoc-js/pixi-webdoc-template#readme",
+  "files": [
+    "publish.js",
+    "helper.js",
+    "static",
+    "tmpl"
+  ],
+  "dependencies": {
+    "@webdoc/model": "^0.1.26-alpha.0",
+    "@webdoc/template-library": "^0.1.26-alpha.0",
+    "code-prettify": "^0.1.0",
+    "color-themes-for-google-code-prettify": "^2.0.4",
+    "common-path-prefix": "^3.0.0",
+    "klaw-sync": "^6.0.0",
+    "missionlog": "^1.6.0",
+    "open-sans-fonts": "^1.6.2",
+    "taffydb": "^2.7.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.0.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
