@@ -7,7 +7,9 @@ const path = require("path");
 const {taffy} = require("taffydb");
 const helper = require("./helper");
 const hasOwnProp = Object.prototype.hasOwnProperty;
-const {TemplateRenderer} = require("@webdoc/template-library");
+const {TemplateRenderer, SymbolLinks} = require("@webdoc/template-library");
+const performance = require("perf_hooks").performance;
+const {doc: findDoc} = require("@webdoc/model");
 
 TemplateRenderer.prototype.linkto = helper.linkto;
 TemplateRenderer.prototype.linkTo = helper.linkto;
@@ -18,6 +20,39 @@ TemplateRenderer.prototype.resolveDocLink = function(docLink) {
   }
 
   return this.linkTo(docLink.path, docLink.path);
+};
+
+// TODO: Move into @webdoc/template-library
+TemplateRenderer.prototype.getNamespaces = function getNamespaces(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "NSDoc");
+};
+TemplateRenderer.prototype.getClasses = function getClasses(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "ClassDoc");
+};
+TemplateRenderer.prototype.getProperties = function getProperties(doc /*: Doc */) {
+  return doc.children.filter((member) => member.type === "PropertyDoc");
+};
+TemplateRenderer.prototype.getMethods = function getMethods(doc /*: Doc */) {
+  return doc.children.filter((member) => member.type === "MethodDoc" &&
+    member.name !== "constructor");
+};
+TemplateRenderer.prototype.getFunctions = function getFunctions(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "FunctionDoc");
+};
+TemplateRenderer.prototype.getConstructor = function getConstructor(doc /*: Doc */) {
+  return doc.members.find((member) => member.type === "MethodDoc" && member.name === "constructor");
+};
+TemplateRenderer.prototype.getEvents = function getEvents(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "EventDoc");
+};
+TemplateRenderer.prototype.getTypedefs = function getTypedefs(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "TypedefDoc");
+};
+TemplateRenderer.prototype.getMixins = function getMixins(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "MixinDoc");
+};
+TemplateRenderer.prototype.getInterfaces = function getInterfaces(doc /*: Doc */) {
+  return doc.members.filter((member) => member.type === "InterfaceDoc");
 };
 
 const htmlsafe = TemplateRenderer.prototype.htmlsafe = (str) => {
@@ -165,6 +200,7 @@ const SignatureBuilder = {
       .map(
         (item) => {
           const attributes = getSignatureAttributes(item);
+
           let itemName = item.identifer || "";
 
           if (item.variadic) {
@@ -259,14 +295,14 @@ function addSignatureTypes(f) {
 }
 
 function addAttribs(f) {
-    var attribs = helper.Attributes(f);
+  const attribs = helper.Attributes(f);
 
-    if (attribs.length) {
-        f.attribs = '';
-        attribs.forEach(function(a) {
-            f.attribs += '<span class="access-signature">' + htmlsafe(a) + '</span>';
-        });
-    }
+  if (attribs.length) {
+    f.attribs = "";
+    attribs.forEach(function(a) {
+      f.attribs += "<span class=\"access-signature\">" + htmlsafe(a) + "</span>";
+    });
+  }
 }
 
 function shortenPaths(files, commonPrefix) {
@@ -300,7 +336,7 @@ function generate(title, docs, filename, resolveLinks) {
     env: env,
     title: title,
     docs: docs,
-    fileName: filename
+    fileName: filename,
   };
 
   outpath = path.join(outdir, filename);
@@ -310,7 +346,12 @@ function generate(title, docs, filename, resolveLinks) {
     html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
   }
 
-  fs.writeFileSync(outpath, html, "utf8");
+  // We don't except to write on this file again (or do we?)
+  fs.writeFile(outpath, html, "utf8", (error) => {
+    if (error) {
+      console.error("Couldn't save " + outpath );
+    }
+  });
 }
 
 function generateSourceFiles(sourceFiles, encoding = "utf8") {
@@ -429,7 +470,7 @@ function linktoExternal(longName, name) {
  * @return {string} The HTML for the navigation sidebar.
  */
 function buildNav(members) {
-  var nav = [];
+  const nav = [];
 
   /*
   if (members.modules.length) {
@@ -503,33 +544,45 @@ function buildNav(members) {
   } // */
 
   if (members.globals.length) {
-      nav.push({
-          type: 'namespace',
-          longname: 'global',
-          members: members.globals.filter(function(v) { return v.kind === 'PropertyDoc'; }),
-          methods: members.globals.filter(function(v) { return v.kind === 'FunctionDoc'; }),
-          typedefs: members.globals.filter(function(v) { return v.kind === 'TypedefDoc'; }),
-          interfaces: members.globals.filter(function(v) { return v.kind === 'InterfaceDoc'; }),
-          events: members.globals.filter(function(v) { return v.kind === 'EventDoc'; }),
-          classes: members.globals.filter(function(v) { return v.kind === 'ClassDoc'; })
-      });
+    nav.push({
+      type: "namespace",
+      longname: "global",
+      members: members.globals.filter(function(v) {
+        return v.kind === "PropertyDoc";
+      }),
+      methods: members.globals.filter(function(v) {
+        return v.kind === "FunctionDoc";
+      }),
+      typedefs: members.globals.filter(function(v) {
+        return v.kind === "TypedefDoc";
+      }),
+      interfaces: members.globals.filter(function(v) {
+        return v.kind === "InterfaceDoc";
+      }),
+      events: members.globals.filter(function(v) {
+        return v.kind === "EventDoc";
+      }),
+      classes: members.globals.filter(function(v) {
+        return v.kind === "ClassDoc";
+      }),
+    });
   }
 
   if (members.classes.length) {
-      _.each(members.classes, function (v) {
-          nav.push({
-              type: 'class',
-              longname: v.longname,
-              name: v.name,
-              path: v.path,
-              deprecated: v.deprecated,
-              members: v.members.filter(child => child.type === "PropertyDoc"),
-              methods: v.members.filter(child => child.type === "MethodDoc"),
-              typedefs: v.members.filter(child => child.type === "TypedefDoc"),
-              interfaces: v.members.filter(child => child.type === "InterfaceDoc"),
-              events: v.members.filter(child => child.type === "EventDoc")
-          });
+    _.each(members.classes, function(v) {
+      nav.push({
+        type: "class",
+        longname: v.longname,
+        name: v.name,
+        path: v.path,
+        deprecated: v.deprecated,
+        members: v.members.filter((child) => child.type === "PropertyDoc"),
+        methods: v.members.filter((child) => child.type === "MethodDoc"),
+        typedefs: v.members.filter((child) => child.type === "TypedefDoc"),
+        interfaces: v.members.filter((child) => child.type === "InterfaceDoc"),
+        events: v.members.filter((child) => child.type === "EventDoc"),
       });
+    });
   }
 
   /*if (members.tutorials.length) {
@@ -576,7 +629,10 @@ function initLogger() {
 }
 
 exports.publish = (options) => {
+  const t0 = performance.now();
   initLogger();
+
+  const docTree = options.doctree;
 
   docDatabase = options.docDatabase;
   const opts = options.opts;
@@ -584,6 +640,7 @@ exports.publish = (options) => {
   env = options.config;
 
   global.env = env;
+  global.env.conf = options.config;
 
   outdir = path.normalize(env.opts.destination);
 
@@ -769,10 +826,10 @@ exports.publish = (options) => {
   });
 
   data().each((doc) => {
-    const url = helper.pathToUrl[doc.path];
+    const url = SymbolLinks.pathToUrl.get(doc.path);
 
     if (url.includes("#")) {
-      doc.id = helper.pathToUrl[doc.path].split(/#/).pop();
+      doc.id = SymbolLinks.pathToUrl.get(doc.path).split(/#/).pop();
     } else {
       doc.id = doc.name;
     }
@@ -795,7 +852,8 @@ exports.publish = (options) => {
     }
   });
 
-  members = helper.getMembers(data);
+  const members = helper.getMembers(data);
+
   // members.tutorials = tutorials.children;
 
   // output pretty-printed source files by default
@@ -847,38 +905,45 @@ exports.publish = (options) => {
   const externals = taffy(members.externals);
   const interfaces = taffy(members.interfaces);
 
-  Object.keys(helper.pathToUrl).forEach((docPath) => {
-    const myClasses = classes({path: docPath}).get();
-    const myExternals = externals({path: docPath}).get();
-    const myInterfaces = interfaces({path: docPath}).get();
-    const myMixins = mixins({path: docPath}).get();
-    const myModules = modules({path: docPath}).get();
-    const myNamespaces = namespaces({path: docPath}).get();
+  const docPaths = SymbolLinks.pathToUrl.keys();
+  let docPathEntry = docPaths.next();
+  let docPath = docPaths.next().value;
 
-    if (myModules.length) {
-      generate(`Module: ${myModules[0].name}`, myModules, helper.pathToUrl[docPath]);
+  while (!docPathEntry.done) {
+    let doc;
+
+    try {
+      doc = findDoc(docPath, docTree);
+    } catch (e) {
+      console.error(docPath + " crashed findDoc in @webdoc/model");
     }
 
-    if (myClasses.length) {
-      generate(`Class: ${myClasses[0].name}`, myClasses, helper.pathToUrl[docPath]);
+    if (!doc) {
+      console.log(docPath + " doesn't point to a doc");
+    } else {
+      const docUrl = SymbolLinks.pathToUrl.get(docPath);
+
+      if (doc.type === "ClassDoc") {
+        generate(`Class: ${doc.name}`, [doc], docUrl);
+      } else if (doc.type === "InterfaceDoc") {
+        generate(`Interface: ${doc.name}`, [doc], docUrl);
+      } else if (doc.type === "NSDoc") {
+        generate(`Namespace: ${doc.name}`, [doc], docUrl);
+      } else if (doc.type === "MixinDoc") {
+        generate(`Mixin: ${doc.name}`, [doc], docUrl);
+      } else if (doc.type === "ModuleDoc") {
+        generate(`Module: ${doc.name}`, [doc], docUrl);
+      } else if (doc.type === "ExternalDoc") {
+        generate(`External: ${doc.name}`, [doc], docUrl);
+      }
     }
 
-    if (myNamespaces.length) {
-      generate(`Namespace: ${myNamespaces[0].name}`, myNamespaces, helper.pathToUrl[docPath]);
-    }
+    docPathEntry = docPaths.next();
+    docPath = docPathEntry.value;
+  }
 
-    if (myMixins.length) {
-      generate(`Mixin: ${myMixins[0].name}`, myMixins, helper.pathToUrl[docPath]);
-    }
+  console.log(`pixi-webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`);
 
-    if (myExternals.length) {
-      generate(`External: ${myExternals[0].name}`, myExternals, helper.pathToUrl[docPath]);
-    }
-
-    if (myInterfaces.length) {
-      generate(`Interface: ${myInterfaces[0].name}`, myInterfaces, helper.pathToUrl[docPath]);
-    }
-  });
   /*
 
   // TODO: move the tutorial functions to templateHelper.js

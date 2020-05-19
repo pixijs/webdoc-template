@@ -1,34 +1,38 @@
 <?js
-var data = obj;
+var doc = obj;
 var self = this;
-const kind = data.type;
+const kind = doc.type;
 ?>
 <dt>
     <div class="nameContainer">
         <h4 class="name" id="<?js= id ?>">
             <a class="share-icon" href="#<?js= id ?>"><span class="glyphicon glyphicon-link"></span></a>
-            <span class="<?js= data.deprecated ? 'status-deprecated' : '' ?>">
-                <?js= (kind === 'class' ? 'new ' : '') + (data.scope === 'static' ? data.path : data.name) ?>
+            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>">
+              <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") { ?>
+                  <?js= "new " + doc.parent.path ?>
+              <?js } else { ?>
+                  <?js= doc.name ?>
+              <?js } ?>
             </span>
-            <?js= (kind !== 'event' ? data.signature : '') ?>
-            <?js if (data.deprecated) { ?>
+            <?js= (doc.type !== 'EventDoc' ? doc.signature : '') ?>
+            <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js
-                    if (typeof data.deprecated === 'string') { ?>
-                    : <span class="deprecated-info"><?js= data.deprecated ?></span>
+                    if (typeof doc.deprecated === 'string') { ?>
+                    : <span class="deprecated-info"><?js= doc.deprecated ?></span>
                     <?js }
                 ?>
                 </span>
             <?js } ?>
-            <?js= data.attribs ?>
-            <?js if (data.inherited || data.inherits) { ?>
-                <span class="access-signature inherited"><?js= "inherited" ?></span>
+            <?js= doc.attribs ?>
+            <?js if (doc.inherited || doc.inherits) { ?>
+                <span class="access-signature inherited"><?js= this.linkTo(doc.inherits, 'inherited') ?></span>
             <?js } ?>
-            <?js if (data.overrides) { ?>
-                <span class="access-signature overrides"><?js= "overrides" ?></span>
+            <?js if (doc.overrides) { ?>
+                <span class="access-signature overrides"><?js= this.linkTo(doc.overrides, 'overrides') ?></span>
             <?js } ?>
         </h4>
 
-        <?js if (data.meta && env.conf.templates['default'].outputSourceFiles) {?>
+        <?js if (doc.meta && env.conf.templates['default'].outputSourceFiles) {?>
         <div class="tag-source">
             <?js= self.linkto(meta.filename, meta.filename.substr(meta.filename.lastIndexOf('/') + 1) + ':' + meta.lineno, null, 'line' + meta.lineno) ?>
         </div>
@@ -36,57 +40,57 @@ const kind = data.type;
     </div>
 </dt>
 <dd>
-    <?js if (data.brief) { ?>
-      <p class="description"><?js= data.brief ?></p>
+    <?js if (doc.brief) { ?>
+      <p class="description"><?js= doc.brief ?></p>
     <?js } ?>
-    <?js if (data.description) { ?>
+    <?js if (doc.description) { ?>
     <div class="description">
-        <?js= data.description ?>
+        <?js= doc.description ?>
     </div>
     <?js } ?>
 
-    <?js if (kind === 'EventDoc' && data.eventType) {?>
+    <?js if (kind === 'EventDoc' && doc.eventType) {?>
         <h5>Type:</h5>
         <ul>
             <li>
-                <?js= self.partial('type.tmpl', [data.eventType]) ?>
+                <?js= self.partial('type.tmpl', [doc.eventType]) ?>
             </li>
         </ul>
     <?js } ?>
 
-    <?js if (data['this']) { ?>
+    <?js if (doc['this']) { ?>
         <h5>This:</h5>
-        <ul><li><?js= this.linkto(data['this'], data['this']) ?></li></ul>
+        <ul><li><?js= this.linkto(doc['this'], doc['this']) ?></li></ul>
     <?js } ?>
 
-    <?js if (data.params && params.length) { ?>
+    <?js if (doc.params && params.length) { ?>
         <?js= this.partial('params.tmpl', params) ?>
     <?js } ?>
 
-    <?js= this.partial('details.tmpl', data) ?>
+    <?js= this.partial('details.tmpl', doc) ?>
 
-    <?js if (data.fires && fires.length) { ?>
+    <?js if (doc.fires && fires.length) { ?>
     <h5>Fires:</h5>
     <ul><?js fires.forEach(function(f) { ?>
         <li><?js= self.linkto(f) ?></li>
     <?js }); ?></ul>
     <?js } ?>
 
-    <?js if (data.listens && listens.length) { ?>
+    <?js if (doc.listens && listens.length) { ?>
     <h5>Listens to Events:</h5>
     <ul><?js listens.forEach(function(f) { ?>
         <li><?js= self.linkto(f) ?></li>
     <?js }); ?></ul>
     <?js } ?>
 
-    <?js if (data.listeners && listeners.length) { ?>
+    <?js if (doc.listeners && listeners.length) { ?>
     <h5>Listeners of This Event:</h5>
     <ul><?js listeners.forEach(function(f) { ?>
         <li><?js= self.linkto(f) ?></li>
     <?js }); ?></ul>
     <?js } ?>
 
-    <?js if (data.exceptions && exceptions.length) { ?>
+    <?js if (doc.exceptions && exceptions.length) { ?>
     <h5>Throws:</h5>
     <?js if (exceptions.length > 1) { ?><ul><?js
         exceptions.forEach(function(r) { ?>
@@ -98,12 +102,12 @@ const kind = data.type;
         <?js });
     } } ?>
 
-    <?js if (data.returns && returns.length) { ?>
+    <?js if (doc.returns && returns.length) { ?>
       <h5>Returns:</h5>
-      <?js= self.partial('returns.tmpl', data.returns) ?>
+      <?js= self.partial('returns.tmpl', doc.returns) ?>
     <?js } ?>
 
-    <?js if (data.examples && examples.length) { ?>
+    <?js if (doc.examples && examples.length) { ?>
         <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
         <?js= this.partial('examples.tmpl', examples) ?>
     <?js } ?>

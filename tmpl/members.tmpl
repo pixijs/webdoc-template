@@ -1,11 +1,11 @@
 <?js
-const data = obj;
+const doc = obj;
 var self = this;
 var typeSignature = '';
 
-if (data.dataType) {
+if (doc.docType) {
     typeSignature += '<span class="type-signature type">';
-    data.dataType.slice(1).forEach(function (name) {
+    doc.docType.slice(1).forEach(function (name) {
         typeSignature += self.linkto(name, self.htmlsafe(name));
         typeSignature += ' | ';
     });
@@ -16,39 +16,39 @@ if (data.dataType) {
     <div class="nameContainer">
         <h4 class="name" id="<?js= id ?>">
             <a class="share-icon" href="#<?js= id ?>"><span class="glyphicon glyphicon-link"></span></a>
-            <span class="<?js= data.deprecated ? 'status-deprecated' : '' ?>"><?js= (data.scope === 'static' ? data.path : data.name) ?></span>
+            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= (doc.scope === 'static' ? doc.path : doc.name) ?></span>
             <?js= typeSignature ?>
-            <?js if (data.deprecated) { ?>
+            <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js
-                    if (typeof data.deprecated === 'string') { ?>
-                    : <span class="deprecated-info"><?js= data.deprecated ?></span>
+                    if (typeof doc.deprecated === 'string') { ?>
+                    : <span class="deprecated-info"><?js= doc.deprecated ?></span>
                     <?js }
                 ?>
                 </span>
             <?js } ?>
-            <?js= data.attribs ?>
-            <?js if (data.inherited) { ?>
-                <span class="access-signature inherited"><?js= "inherits" ?></span>
+            <?js= doc.attribs ?>
+            <?js if (doc.inherited) { ?>
+                <span class="access-signature inherited"><?js= this.linkTo(doc.inherits, 'inherited') ?></span>
             <?js } ?>
-            <?js if (data.overrides) { ?>
-                <span class="access-signature overrides"><?js= "overrides" ?></span>
+            <?js if (doc.overrides) { ?>
+                <span class="access-signature overrides"><?js= this.linkTo(doc.overrides, 'overrides') ?></span>
             <?js } ?>
         </h4>
     </div>
 </dt>
 <dd>
-    <?js if (data.brief) { ?>
-      <p class="description"><?js= data.brief ?></p>
+    <?js if (doc.brief) { ?>
+      <p class="description"><?js= doc.brief ?></p>
     <?js } ?>
-    <?js if (data.description) { ?>
+    <?js if (doc.description) { ?>
     <div class="description">
-        <?js= data.description ?>
+        <?js= doc.description ?>
     </div>
     <?js } ?>
 
-    <?js= this.partial('details.tmpl', data) ?>
+    <?js= this.partial('details.tmpl', doc) ?>
 
-    <?js if (data.examples && examples.length) { ?>
+    <?js if (doc.examples && examples.length) { ?>
         <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
         <?js= this.partial('examples.tmpl', examples) ?>
     <?js } ?>

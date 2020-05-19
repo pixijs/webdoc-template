@@ -29,8 +29,8 @@
     "tmpl"
   ],
   "dependencies": {
-    "@webdoc/model": "^0.1.26-alpha.0",
-    "@webdoc/template-library": "^0.1.26-alpha.0",
+    "@webdoc/model": "^0.1.27-alpha.0",
+    "@webdoc/template-library": "^0.1.28-alpha.0",
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
     "common-path-prefix": "^3.0.0",
@@ -40,7 +40,7 @@
     "taffydb": "^2.7.3"
   },
   "devDependencies": {
-    "eslint": "^7.0.0",
+    "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0"
   }
 }
