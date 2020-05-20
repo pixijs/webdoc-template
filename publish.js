@@ -9,7 +9,7 @@ const helper = require("./helper");
 const hasOwnProp = Object.prototype.hasOwnProperty;
 const {TemplateRenderer, SymbolLinks} = require("@webdoc/template-library");
 const performance = require("perf_hooks").performance;
-const {doc: findDoc} = require("@webdoc/model");
+const {doc: findDoc, isClass, isInterface, isNamespace, isMixin, isModule, isExternal} = require("@webdoc/model");
 
 TemplateRenderer.prototype.linkto = helper.linkto;
 TemplateRenderer.prototype.linkTo = helper.linkto;
@@ -890,17 +890,17 @@ exports.publish = (options) => {
     } else {
       const docUrl = SymbolLinks.pathToUrl.get(docPath);
 
-      if (doc.type === "ClassDoc") {
+      if (isClass(doc)) {
         generate(`Class: ${doc.name}`, [doc], docUrl);
-      } else if (doc.type === "InterfaceDoc") {
+      } else if (isInterface(doc)) {
         generate(`Interface: ${doc.name}`, [doc], docUrl);
-      } else if (doc.type === "NSDoc") {
+      } else if (isNamespace(doc)) {
         generate(`Namespace: ${doc.name}`, [doc], docUrl);
-      } else if (doc.type === "MixinDoc") {
+      } else if (isMixin(doc)) {
         generate(`Mixin: ${doc.name}`, [doc], docUrl);
-      } else if (doc.type === "ModuleDoc") {
+      } else if (isModule(doc)) {
         generate(`Module: ${doc.name}`, [doc], docUrl);
-      } else if (doc.type === "ExternalDoc") {
+      } else if (isExternal(doc)) {
         generate(`External: ${doc.name}`, [doc], docUrl);
       }
     }
