@@ -16,7 +16,7 @@ if (doc.docType) {
     <div class="nameContainer">
         <h4 class="name" id="<?js= id ?>">
             <a class="share-icon" href="#<?js= id ?>"><span class="glyphicon glyphicon-link"></span></a>
-            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= (doc.scope === 'static' ? doc.path : doc.name) ?></span>
+            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= doc.name ?></span>
             <?js= typeSignature ?>
             <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js

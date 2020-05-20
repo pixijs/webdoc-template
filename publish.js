@@ -22,39 +22,6 @@ TemplateRenderer.prototype.resolveDocLink = function(docLink) {
   return this.linkTo(docLink.path, docLink.path);
 };
 
-// TODO: Move into @webdoc/template-library
-TemplateRenderer.prototype.getNamespaces = function getNamespaces(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "NSDoc");
-};
-TemplateRenderer.prototype.getClasses = function getClasses(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "ClassDoc");
-};
-TemplateRenderer.prototype.getProperties = function getProperties(doc /*: Doc */) {
-  return doc.children.filter((member) => member.type === "PropertyDoc");
-};
-TemplateRenderer.prototype.getMethods = function getMethods(doc /*: Doc */) {
-  return doc.children.filter((member) => member.type === "MethodDoc" &&
-    member.name !== "constructor");
-};
-TemplateRenderer.prototype.getFunctions = function getFunctions(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "FunctionDoc");
-};
-TemplateRenderer.prototype.getConstructor = function getConstructor(doc /*: Doc */) {
-  return doc.members.find((member) => member.type === "MethodDoc" && member.name === "constructor");
-};
-TemplateRenderer.prototype.getEvents = function getEvents(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "EventDoc");
-};
-TemplateRenderer.prototype.getTypedefs = function getTypedefs(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "TypedefDoc");
-};
-TemplateRenderer.prototype.getMixins = function getMixins(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "MixinDoc");
-};
-TemplateRenderer.prototype.getInterfaces = function getInterfaces(doc /*: Doc */) {
-  return doc.members.filter((member) => member.type === "InterfaceDoc");
-};
-
 const htmlsafe = TemplateRenderer.prototype.htmlsafe = (str) => {
   if (typeof str !== "string") {
     str = String(str);

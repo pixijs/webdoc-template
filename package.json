@@ -1,6 +1,6 @@
 {
   "name": "pixi-webdoc-template",
-  "version": "0.0.26-alpha.0",
+  "version": "0.0.27-alpha.0",
   "description": "Pixi's webdoc site template",
   "main": "publish.js",
   "scripts": {
@@ -29,12 +29,13 @@
     "tmpl"
   ],
   "dependencies": {
-    "@webdoc/model": "^0.1.27-alpha.0",
-    "@webdoc/template-library": "^0.1.28-alpha.0",
+    "@webdoc/model": "^0.1.45-alpha.0",
+    "@webdoc/template-library": "^0.1.45-alpha.0",
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
     "common-path-prefix": "^3.0.0",
     "klaw-sync": "^6.0.0",
+    "lodash": "*",
     "missionlog": "^1.6.0",
     "open-sans-fonts": "^1.6.2",
     "taffydb": "^2.7.3"
