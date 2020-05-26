@@ -10,7 +10,7 @@
             return;
         }
 
-        if (parentParam && parentParam.identifer && param.identifer) {
+        if (parentParam && parentParam.identifier && param.identifier) {
             try {
                 paramRegExp = new RegExp('^(?:' + parentParam.name + '(?:\\[\\])*)\\.(.+)$');
             }
@@ -20,7 +20,7 @@
                 return;
             }
 
-            if ( paramRegExp.test(param.identifer) ) {
+            if ( paramRegExp.test(param.identifier) ) {
                 param.name = RegExp.$1;
                 parentParam.subparams = parentParam.subparams || [];
                 parentParam.subparams.push(param);
@@ -47,7 +47,7 @@
             params.hasAttributes = true;
         }
 
-        if (param.identifer) {
+        if (param.identifier) {
             params.hasName = true;
         }
 
@@ -87,7 +87,7 @@
 
         <tr>
             <?js if (params.hasName) {?>
-                <td class="name"><code><?js= param.identifer ?></code></td>
+                <td class="name"><code><?js= param.identifier ?></code></td>
             <?js } ?>
 
             <td class="type">
