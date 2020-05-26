@@ -4,7 +4,7 @@ var self = this;
 ?>
 <dl class="details">
     <?js
-        var properties = doc.members.filter(child => child.type === "PropertyDoc");
+        var properties = doc.type === "NSDoc" ? [] : doc.members.filter(child => child.type === "PropertyDoc");
         if (properties && properties.length && properties.forEach) {
     ?>
 
