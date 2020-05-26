@@ -49,6 +49,19 @@ var canStyleAsNamespace = function(item) {
             }
             ?>
             </ul>
+
+            <ul class="enums itemMembers">
+                <?js if (item.enums.length) { ?>
+                  <span class="subtitle">Enums</span>
+
+                  <?js item.enums.forEach((enumDoc) => { ?>
+                      <li class="parent" data-name="<?js= enumDoc.path ?>">
+                          <?js= self.linkTo(enumDoc.path, enumDoc.name) ?>
+                      </li>
+                  <?js });
+                } ?>
+            </ul>
+
             <?js
             }
             if (item.typedefs) {

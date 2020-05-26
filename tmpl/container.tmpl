@@ -23,8 +23,8 @@
         ancestorClasses = this.plugins.relations.getAncestorClasses(currentDoc);
       }
 ?>
-<?js if (doc.type === 'mainpage' || (doc.type === 'package')) { ?>
-    <?js= self.partial('mainpage.tmpl', doc) ?>
+<?js if (doc.type === 'mainPage' || doc.type === 'PackageDoc') { ?>
+    <?js= this.partial('components/main-page.tmpl', doc) ?>
 <?js } else if (doc.type === 'source') { ?>
     <?js= self.partial('source.tmpl', doc) ?>
 <?js } else { ?>
@@ -230,6 +230,18 @@
 
     <?js if (hasInheritedEvents) { ?>
         <?js= this.partial('class-hierarchy/inherited-events.tmpl', { ancestorClasses, events }) ?>
+    <?js } ?>
+
+    <?js
+        const enums = this.getEnums(currentDoc);
+
+        if (enums.length) {
+    ?>
+        <h3 class="subsection-title">Enums</h3>
+
+        <?js enums.forEach((enumDoc) => { ?>
+            <?js= self.partial("doc/enum.tmpl", enumDoc) ?>
+        <?js }); ?>
     <?js } ?>
 
     <?js

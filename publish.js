@@ -1,4 +1,5 @@
 // @flow
+// TODO: Add flow syntax types
 
 const _ = require("lodash");
 const commonPathPrefix = require("common-path-prefix");
@@ -22,6 +23,7 @@ const {
   isEvent,
   isTypedef,
 } = require("@webdoc/model");
+const fsp = require("fs").promises;
 
 const isProperty = (d) => d.type === "PropertyDoc";
 
@@ -311,35 +313,6 @@ function getPathFromDoclet({meta}) {
     meta.filename;
 }
 
-function generate(title, docs, filename, resolveLinks) {
-  let docData;
-  let html;
-  let outpath;
-
-  resolveLinks = resolveLinks !== false;
-
-  docData = {
-    env: env,
-    title: title,
-    docs: docs,
-    fileName: filename,
-  };
-
-  outpath = path.join(outdir, filename);
-  html = view.render("container.tmpl", docData);
-
-  if (resolveLinks) {
-    html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
-  }
-
-  // We don't except to write on this file again (or do we?)
-  fs.writeFile(outpath, html, "utf8", (error) => {
-    if (error) {
-      console.error("Couldn't save " + outpath );
-    }
-  });
-}
-
 function generateSourceFiles(sourceFiles, encoding = "utf8") {
   Object.keys(sourceFiles).forEach((file) => {
     let source;
@@ -451,7 +424,8 @@ type Navigable = {
   events: EventDoc[],
   interfaces: InterfaceDoc[]
   methods: MethodDoc[],
-  typedef: TypedefDoc[]
+  typedef: TypedefDoc[],
+  enums: EnumDoc[]
 }
 */
 
@@ -463,11 +437,45 @@ function Navigable(
   this.name = doc.name;
   this.path = doc.path;
   this.deprecated = doc.deprecated;
-  this.members = doc.members.filter((child) => isProperty(child));
-  this.methods = doc.members.filter((child) => (isMethod(child) || isFunction(child)) && child.name !== "constructor");
-  this.typedefs = doc.members.filter((child) => isTypedef(child));
-  this.interfaces = doc.members.filter((child) => isInterface(child));
-  this.events = doc.members.filter((child) => isEvent(child));
+
+  const properties = this.members = [];
+  const methods = this.methods = [];
+  const events = this.events = [];
+  const interfaces = this.interfaces = [];
+  const enums = this.enums = [];
+  const typedefs = this.typedefs = [];
+
+  // Loop through all the members and push them into the appropriate category.
+  doc.members.forEach((child) => {
+    switch (child.type) {
+    case "ClassDoc":
+    case "NSDoc":
+      break;
+    case "PropertyDoc":
+      properties.push(child);
+      break;
+    case "MethodDoc":
+    case "FunctionDoc":
+      if (child.name !== "constructor") {
+        methods.push(child);
+      }
+      break;
+    case "EventDoc":
+      events.push(child);
+      break;
+    case "InterfaceDoc":
+      interfaces.push(child);
+      break;
+    case "EnumDoc":
+      enums.push(child);
+      break;
+    case "TypedefDoc":
+      typedefs.push(child);
+      break;
+    default:
+      console.log("Unknown doc-type " + child.type);
+    }
+  });
 }
 
 // Creates a list of "navigable" entries that are fed into navigation.tmpl to generate the
@@ -816,29 +824,7 @@ exports.publish = (options) => {
     generate("Global", [{kind: "globalobj"}], globalUrl);
   }
 
-  // index page displays information from package.json and lists files
-  const files = docDatabase({kind: "file"}).get();
-  const packages = docDatabase({kind: "package"}).get();
-
-  const arr = [];
-  generate("Home",
-    packages.concat(
-      [{
-        kind: "mainpage",
-        readme: opts.readme,
-        longname: (opts.mainpagetitle) ? opts.mainpagetitle : "Main Page",
-        children: arr,
-        members: arr,
-      }],
-    ).concat(files), indexUrl);
-
-  // set up the lists that we'll use to generate pages
-  const classes = taffy(members.classes);
-  const modules = taffy(members.modules);
-  const namespaces = taffy(members.namespaces);
-  const mixins = taffy(members.mixins);
-  const externals = taffy(members.externals);
-  const interfaces = taffy(members.interfaces);
+  generateHomePage(indexUrl, docTree);
 
   const docPaths = SymbolLinks.pathToUrl.keys();
   let docPathEntry = docPaths.next();
@@ -908,3 +894,77 @@ exports.publish = (options) => {
 
   saveChildren(tutorials);*/
 };
+
+// Generate the HTML file with the documentation of all docs
+function generate(title, docs, filename, resolveLinks) {
+  let docData;
+  let html;
+  let outpath;
+
+  resolveLinks = resolveLinks !== false;
+
+  docData = {
+    env: env,
+    title: title,
+    docs: docs,
+    fileName: filename,
+  };
+
+  outpath = path.join(outdir, filename);
+  html = view.render("container.tmpl", docData);
+
+  if (resolveLinks) {
+    html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
+  }
+
+  // We don't except to write on this file again (or do we?)
+  fs.writeFile(outpath, html, "utf8", (error) => {
+    if (error) {
+      console.error("Couldn't save " + outpath );
+    }
+  });
+}
+
+// Generate the home page, this loads the top-level members, packages, and README
+async function generateHomePage(pagePath /*: string */, rootDoc /*: RootDoc */) /*: void */ {
+  const userConfig = Webdoc.userConfig;
+
+  // index page displays information from package.json and lists files
+  const files = docDatabase({kind: "file"}).get();
+  const packages = docDatabase({type: "PackageDoc"}).get();
+
+  const arr = rootDoc.members.filter((doc) =>
+    doc.type === "FunctionDoc" ||
+      doc.type === "EnumDoc" ||
+      doc.type === "MethodDoc" ||
+      doc.type === "PropertyDoc" ||
+      doc.type === "TypedefDoc");
+
+  const readme = userConfig.template.readme;
+  let readmeContent = "";
+
+  if (readme) {
+    const readmePath = path.join(process.cwd(), readme);
+
+    readmeContent = await fsp.readFile(readmePath, "utf8");
+
+    const markdownRenderer = require("markdown-it")({
+      breaks: false,
+      html: true,
+    })
+      .use(require("markdown-it-highlightjs"));
+
+    readmeContent = markdownRenderer.render(readmeContent);
+  }
+
+  generate("Home",
+    packages.concat(
+      [{
+        type: "mainPage",
+        readme: readmeContent,
+        path: userConfig.template.mainPage.title,
+        children: arr,
+        members: arr,
+      }],
+    ).concat(files), pagePath);
+}
