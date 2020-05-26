@@ -11,7 +11,7 @@ const kind = doc.type;
               <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") { ?>
                   <?js= "new " + doc.parent.path ?>
               <?js } else { ?>
-                  <?js= doc.name ?>
+                  <?js= doc.scope === "static" && doc.type === "MethodDoc" ? doc.path : doc.name ?>
               <?js } ?>
             </span>
             <?js= (doc.type !== 'EventDoc' ? doc.signature : '') ?>

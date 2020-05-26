@@ -1,9 +1,27 @@
 <?js
     var self = this;
 
+    const LAYOUT_COLLAPSIBLE_GROUP = 'sublayouts' + String.fromCharCode(47) + 'collapsible-group.tmpl';
+
     docs.forEach((doc, i) => {
+      if (!doc) {
+        return;// happens!
+      }
+
       const currentDoc = doc;
       const memberList = currentDoc.members;
+      const properties = this.getProperties(doc);
+      const methods = this.getMethodLikes(doc);
+      const events = this.getEvents(doc);
+
+      let ancestorClasses
+      const hasInheritedProperties = doc.extends && properties.find(prop => prop.inherits);
+      const hasInheritedMethods = doc.extends && methods.find(method => method.inherits);
+      const hasInheritedEvents = doc.extends && events.find(event => event.inherits);
+
+      if (hasInheritedProperties || hasInheritedMethods || hasInheritedEvents) {
+        ancestorClasses = this.plugins.relations.getAncestorClasses(currentDoc);
+      }
 ?>
 <?js if (doc.type === 'mainpage' || (doc.type === 'package')) { ?>
     <?js= self.partial('mainpage.tmpl', doc) ?>
@@ -13,12 +31,11 @@
 
 <section>
 
-
 <header>
   <div class="header content-size">
       <h2>
         <?js if (doc.ancestors && doc.ancestors.length) { ?>
-          <span class="ancestors"><?js= doc.ancestors.join('.') ?></span><?js } ?><?js= (doc.name || title) ? '.' + (doc.name || title) : '' ?>
+          <span class="ancestors"><?js= doc.ancestors.join('.') ?></span><?js } ?><?js= (doc.ancestors && doc.ancestors.length ? '.' : '') + (doc.name || title) ?>
 
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
@@ -99,31 +116,42 @@
     <?js } ?>
 
     <?js
-        var classes = this.getClasses(doc);
+        const classes = this.getClasses(doc);
+
         if (classes && classes.length) {
     ?>
         <h3 class="subsection-title">Classes</h3>
 
-        <dl><?js classes.forEach(function(c) { ?>
-            <dt><?js= self.linkto(c.path, c.name) ?></dt>
-            <dd><?js if (c.summary) { ?><?js= c.summary ?><?js } ?></dd>
+        <dl class="clearfix summary-list list-classes"><?js classes.forEach(function(c) { ?>
+            <dt class="<?js= c.deprecated ? 'status-deprecated' : ''?>"><?js= self.linkto(c.path, c.name) ?></dt>
+            <?js if (c.summary) { ?><dd><?js= c.summary ?></dd><?js } ?>
         <?js }); ?></dl>
     <?js } ?>
 
     <?js
         var interfaces = this.getInterfaces(doc);
-        if (interfaces && interfaces.length) {
-    ?>
-        <h3 class="subsection-title">Interfaces</h3>
 
-        <dl><?js interfaces.forEach(function(i) { ?>
-            <dt><?js= self.linkto(i.path, i.name) ?></dt>
-            <dd><?js if (i.summary) { ?><?js= i.summary ?><?js } ?></dd>
-        <?js }); ?></dl>
+        if (interfaces && interfaces.length && interfaces.forEach) {
+    ?>
+        <h3 class="subsection-title">Interface Definitions</h3>
+
+        <dl class="list-interfaces"><?js interfaces.forEach(function(e) {
+                if (e.signature) {
+            ?>
+                <?js= self.partial('method.tmpl', e) ?>
+            <?js
+                }
+                else {
+            ?>
+                <?js= self.partial('members.tmpl', e) ?>
+            <?js
+                }
+            }); ?></dl>
     <?js } ?>
 
     <?js
-        var mixins = this.getMixins(doc);
+        const mixins = this.getMixins(doc);
+
         if (mixins && mixins.length) {
     ?>
         <h3 class="subsection-title">Mixins</h3>
@@ -135,19 +163,21 @@
     <?js } ?>
 
     <?js
-        var namespaces = this.getNamespaces(doc);
+        const namespaces = this.getNamespaces(doc);
+
         if (namespaces && namespaces.length) {
     ?>
         <h3 class="subsection-title">Namespaces</h3>
 
-        <dl><?js namespaces.forEach(function(n) { ?>
-            <dt><?js= self.linkto(n.path, n.name) ?></dt>
-            <dd><?js if (n.summary) { ?><?js= n.summary ?><?js } ?></dd>
+        <dl class="clearfix summary-list list-namespaces"><?js namespaces.forEach(function(n) { ?>
+            <dt class="<?js= n.deprecated ? 'status-deprecated' : ''?>"><?js= self.linkto(n.path, n.name) ?></dt>
+
+            <?js if (n.summary) { ?><dd><?js= n.summary ?></dd><?js } ?>
         <?js }); ?></dl>
     <?js } ?>
 
     <?js
-        var members = this.getProperties(doc);
+        let members = hasInheritedProperties ? properties.filter(prop => !prop.inherited) : properties;
 
         // symbols that are assigned to module.exports are not globals, even though they're not a memberof anything
         if (members && members.length && members.forEach) {
@@ -165,19 +195,46 @@
     <?js } ?>
 
     <?js
-        const methods = this.getMethods(doc);
+        // Methods that are not inherited
+        const _methods = hasInheritedMethods ? methods.filter(method => !method.inherited) : methods;
 
-        if (methods && methods.length && methods.forEach) {
+        if (_methods && _methods.length) {
     ?>
         <h3 class="subsection-title">Methods</h3>
 
-        <?js methods.forEach(function(m) { ?>
+        <?js _methods.forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
     <?js } ?>
 
     <?js
-        var typedefs = this.getTypedefs(doc);
+        // Events that are not inherited
+        const _events = hasInheritedEvents ? events.filter(event => !event.inherited) : events;
+
+        if (_events && _events.length) {
+    ?>
+        <h3 class="subsection-title">Events</h3>
+
+        <?js _events.forEach(function(e) { ?>
+            <?js= self.partial('method.tmpl', e) ?>
+        <?js }); ?>
+    <?js } ?>
+
+    <?js if (hasInheritedProperties) { ?>
+        <?js= this.partial('class-hierarchy/inherited-properties.tmpl', { ancestorClasses, properties }) ?>
+    <?js } ?>
+
+    <?js if (hasInheritedMethods) { ?>
+        <?js= this.partial('class-hierarchy/inherited-methods.tmpl', { ancestorClasses, methods }) ?>
+    <?js } ?>
+
+    <?js if (hasInheritedEvents) { ?>
+        <?js= this.partial('class-hierarchy/inherited-events.tmpl', { ancestorClasses, events }) ?>
+    <?js } ?>
+
+    <?js
+        const typedefs = this.getTypedefs(doc);
+
         if (typedefs.length) {
     ?>
         <h3 class="subsection-title">Type Definitions</h3>
@@ -194,18 +251,6 @@
             <?js
                 }
             }); ?>
-    <?js } ?>
-
-    <?js
-        var events = this.getEvents(doc);
-
-        if (events && events.length && events.forEach) {
-    ?>
-        <h3 class="subsection-title">Events</h3>
-
-        <?js events.forEach(function(e) { ?>
-            <?js= self.partial('method.tmpl', e) ?>
-        <?js }); ?>
     <?js } ?>
 </article>
 

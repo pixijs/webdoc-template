@@ -7,9 +7,23 @@ const path = require("path");
 const {taffy} = require("taffydb");
 const helper = require("./helper");
 const hasOwnProp = Object.prototype.hasOwnProperty;
-const {TemplateRenderer, SymbolLinks} = require("@webdoc/template-library");
+const {TemplateRenderer, SymbolLinks, RelationsPlugin} = require("@webdoc/template-library");
 const performance = require("perf_hooks").performance;
-const {doc: findDoc, isClass, isInterface, isNamespace, isMixin, isModule, isExternal} = require("@webdoc/model");
+const {
+  doc: findDoc,
+  isClass,
+  isInterface,
+  isNamespace,
+  isMixin,
+  isModule,
+  isExternal,
+  isMethod,
+  isFunction,
+  isEvent,
+  isTypedef,
+} = require("@webdoc/model");
+
+const isProperty = (d) => d.type === "PropertyDoc";
 
 TemplateRenderer.prototype.linkto = helper.linkto;
 TemplateRenderer.prototype.linkTo = helper.linkto;
@@ -22,6 +36,8 @@ TemplateRenderer.prototype.resolveDocLink = function(docLink) {
   return this.linkTo(docLink.path, docLink.path);
 };
 
+let randomDice = 0;
+
 const htmlsafe = TemplateRenderer.prototype.htmlsafe = (str) => {
   if (typeof str !== "string") {
     str = String(str);
@@ -30,6 +46,9 @@ const htmlsafe = TemplateRenderer.prototype.htmlsafe = (str) => {
   return str.replace(/&/g, "&amp;")
     .replace(/</g, "&lt;");
 };
+
+TemplateRenderer.prototype.toHtmlSafe = htmlsafe;
+TemplateRenderer.prototype.generateRandomID = () => `${randomDice++}`;
 
 const {Log, LogLevel, tag} = require("missionlog");
 
@@ -255,7 +274,7 @@ function addSignatureReturns(f) {
 }
 
 function addSignatureTypes(f) {
-  const types = f.type ? buildItemTypeStrings(f) : [];
+  const types = f.dataType ? buildItemTypeStrings(f) : [];
 
   f.signature = `${f.signature || ""}<span class="type-signature">` +
         `${types.length ? ` :${types.join("|")}` : ""}</span>`;
@@ -422,21 +441,38 @@ function linktoExternal(longName, name) {
   return linkto(longName, name.replace(/(^"|"$)/g, ""));
 }
 
-/**
- * Create the navigation sidebar.
- * @param {object} members The members that will be used to create the sidebar.
- * @param {array<object>} members.classes
- * @param {array<object>} members.externals
- * @param {array<object>} members.globals
- * @param {array<object>} members.mixins
- * @param {array<object>} members.modules
- * @param {array<object>} members.namespaces
- * @param {array<object>} members.tutorials
- * @param {array<object>} members.events
- * @param {array<object>} members.interfaces
- * @return {string} The HTML for the navigation sidebar.
- */
-function buildNav(members) {
+/*::
+type Navigable = {
+  type: "class" | "global" | "namespace",
+  name: string,
+  path: string,
+  deprecated: boolean,
+  classes: ClassDoc[],
+  events: EventDoc[],
+  interfaces: InterfaceDoc[]
+  methods: MethodDoc[],
+  typedef: TypedefDoc[]
+}
+*/
+
+function Navigable(
+  doc /*: { name: string, path: string, deprecated: boolean, members: Doc[] } */,
+  type /*: "class" | "namespace" */,
+) {
+  this.type = type;
+  this.name = doc.name;
+  this.path = doc.path;
+  this.deprecated = doc.deprecated;
+  this.members = doc.members.filter((child) => isProperty(child));
+  this.methods = doc.members.filter((child) => (isMethod(child) || isFunction(child)) && child.name !== "constructor");
+  this.typedefs = doc.members.filter((child) => isTypedef(child));
+  this.interfaces = doc.members.filter((child) => isInterface(child));
+  this.events = doc.members.filter((child) => isEvent(child));
+}
+
+// Creates a list of "navigable" entries that are fed into navigation.tmpl to generate the
+// main navigation bar.
+function buildNav(members) /*: Navigable[] */ {
   const nav = [];
 
   /*
@@ -474,81 +510,26 @@ function buildNav(members) {
           });
       });
   }
+  */
 
   if (members.namespaces.length) {
-      _.each(members.namespaces, function (v) {
-          nav.push({
-              type: 'namespace',
-              longname: v.longname,
-              deprecated: v.deprecated,
-              name: v.name,
-              members: find({
-                  kind: 'member',
-                  memberof: v.longname
-              }),
-              methods: find({
-                  kind: 'function',
-                  memberof: v.longname
-              }),
-              typedefs: find({
-                  kind: 'typedef',
-                  memberof: v.longname
-              }),
-              interfaces: find({
-                  kind: 'interface',
-                  memberof: v.longname
-              }),
-              events: find({
-                  kind: 'event',
-                  memberof: v.longname
-              }),
-              classes: find({
-                  kind: 'class',
-                  memberof: v.longname
-              })
-          });
-      });
-  } // */
-
-  if (members.globals.length) {
-    nav.push({
-      type: "namespace",
-      longname: "global",
-      members: members.globals.filter(function(v) {
-        return v.kind === "PropertyDoc";
-      }),
-      methods: members.globals.filter(function(v) {
-        return v.kind === "FunctionDoc";
-      }),
-      typedefs: members.globals.filter(function(v) {
-        return v.kind === "TypedefDoc";
-      }),
-      interfaces: members.globals.filter(function(v) {
-        return v.kind === "InterfaceDoc";
-      }),
-      events: members.globals.filter(function(v) {
-        return v.kind === "EventDoc";
-      }),
-      classes: members.globals.filter(function(v) {
-        return v.kind === "ClassDoc";
-      }),
+    _.each(members.namespaces, function(nsDoc) {
+      nav.push(new Navigable(nsDoc, "namespace"));
     });
   }
 
+  if (members.globals.length) {
+    nav.push(new Navigable({
+      type: "NSDoc",
+      name: "globals",
+      path: "globals",
+      members: members.globals,
+    }, "namespace"));
+  }
+
   if (members.classes.length) {
-    _.each(members.classes, function(v) {
-      nav.push({
-        type: "class",
-        longname: v.longname,
-        name: v.name,
-        path: v.path,
-        deprecated: v.deprecated,
-        members: v.members.filter((child) => child.type === "PropertyDoc"),
-        methods: v.members.filter((child) => child.type === "MethodDoc"),
-        typedefs: v.members.filter((child) => child.type === "TypedefDoc"),
-        interfaces: v.members.filter((child) => child.type === "InterfaceDoc"),
-        events: v.members.filter((child) => child.type === "EventDoc"),
-      });
+    _.each(members.classes, (classDoc) => {
+      nav.push(new Navigable(classDoc, "class"));
     });
   }
 
@@ -633,7 +614,10 @@ exports.publish = (options) => {
 
   templatePath = __dirname;
 
-  view = new TemplateRenderer(path.join(templatePath, "tmpl"), docDatabase);
+  view = new TemplateRenderer(path.join(templatePath, "tmpl"), docDatabase, docTree);
+  view.installPlugin("relations", RelationsPlugin);
+
+  view.plugins.relations.buildRelations();
 
   // claim some special filenames in advance, so the All-Powerful Overseer of Filename Uniqueness
   // doesn't try to hand them out later
@@ -660,22 +644,6 @@ exports.publish = (options) => {
 
     doclet.attribs = "";
 
-    if (doclet.examples) {
-      doclet.examples = doclet.examples.map((example) => {
-        let caption;
-        let code;
-
-        if (example.match(/^\s*<caption>([\s\S]+?)<\/caption>(\s*[\n\r])([\s\S]+)$/i)) {
-          caption = RegExp.$1;
-          code = RegExp.$3;
-        }
-
-        return {
-          caption: caption || "",
-          code: code || example,
-        };
-      });
-    }
     if (doclet.see) {
       doclet.see.forEach((seeItem, i) => {
         doclet.see[i] = hashToLink(doclet, seeItem);
@@ -886,8 +854,8 @@ exports.publish = (options) => {
     }
 
     if (!doc) {
-      console.log(docPath + " doesn't point to a doc");
-    } else {
+      publishLog.warn(docPath + " doesn't point to a doc");
+    } else if (doc.access !== "private" && !doc.ignore) {
       const docUrl = SymbolLinks.pathToUrl.get(docPath);
 
       if (isClass(doc)) {
