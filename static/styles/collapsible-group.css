@@ -9,6 +9,10 @@
   vertical-align: bottom;
 }
 
+.collapsible-group-header > a {
+  vertical-align: bottom;
+}
+
 .collapsible-group-body {
   margin-top: 0px;
   padding-top: 0px;
