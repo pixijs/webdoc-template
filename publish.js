@@ -429,6 +429,7 @@ type Navigable = {
 }
 */
 
+// Represents an entry into the global navigation bar
 function Navigable(
   doc /*: { name: string, path: string, deprecated: boolean, members: Doc[] } */,
   type /*: "class" | "namespace" */,
@@ -444,6 +445,7 @@ function Navigable(
   const interfaces = this.interfaces = [];
   const enums = this.enums = [];
   const typedefs = this.typedefs = [];
+  const tutorials = this.tutorials = [];
 
   // Loop through all the members and push them into the appropriate category.
   doc.members.forEach((child) => {
@@ -471,6 +473,9 @@ function Navigable(
       break;
     case "TypedefDoc":
       typedefs.push(child);
+      break;
+    case "TutorialDoc":
+      tutorials.push(child);
       break;
     default:
       console.log("Unknown doc-type " + child.type);
@@ -541,11 +546,11 @@ function buildNav(members) /*: Navigable[] */ {
     });
   }
 
-  /*if (members.tutorials.length) {
-      _.each(members.tutorials, function(v) {
-          nav.push(prepareTutorialNav(v));
-      });
-  } */
+  if (members.tutorials.length) {
+    _.each(members.tutorials, function(v) {
+      nav.push(new Navigable(tutorialDoc, "tutorial"));
+    });
+  }
 
   return nav;
 }
@@ -789,28 +794,18 @@ exports.publish = (options) => {
   data().each((doc) => {
     doc.ancestors = getAncestorLinks(doc);
 
-    if (doc.type === "PropertyDoc") {
+    if (doc.type === "PropertyDoc" || doc.type === "EnumDoc") {
       addSignatureTypes(doc);
       addAttribs(doc);
     }
   });
 
   const members = helper.getMembers(data);
-
-  // members.tutorials = tutorials.children;
+  members.tutorials = tutorials;
+  tutorials.forEach((t) => generateTutorialLinks(t));
 
   // output pretty-printed source files by default
   outputSourceFiles = conf.default && conf.default.outputSourceFiles !== false;
-
-  // add template helpers
-  /*
-  view.find = find;
-  view.linkto = linkto;
-  view.resolveAuthorLinks = resolveAuthorLinks;
-  view.tutoriallink = tutoriallink;
-  view.htmlsafe = htmlsafe;
-  view.outputSourceFiles = outputSourceFiles; */
-
   // once for all
   view.nav = buildNav(members);
   // attachModuleSymbols( find({longname: {left: "module:"}}), members.modules );
@@ -967,4 +962,41 @@ async function generateHomePage(pagePath /*: string */, rootDoc /*: RootDoc */) 
         members: arr,
       }],
     ).concat(files), pagePath);
+}
+
+function generateTutorialLinks(tutorial /*: TutorialDoc */) {
+  if (!tutorial) {
+    return;
+  }
+
+  SymbolLinks.createLink(tutorial);
+
+  tutorial.members.forEach((child) => {
+    generateTutorialLinks(child);
+  });
+}
+
+/*::
+type Tutorial = {
+  title: string,
+  content: string,
+  children: Tutorial[]
+}
+*/
+
+async function generateTutorial(title /*: string */, tutorial /*: string */, filename /*: string */) {
+  const tutorialData = {
+    title: title,
+    header: tutorial.title,
+    content: tutorial.parse(),
+    children: tutorial.children,
+  };
+
+  const tutorialPath = path.join(outdir, filename);
+  const html = view.render("tutorial.tmpl", tutorialData);
+
+  // yes, you can use {@link} in tutorials too!
+  // html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
+
+  fs.writeFileSync(tutorialPath, html, "utf8");
 }

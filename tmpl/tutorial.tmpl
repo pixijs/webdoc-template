@@ -1,3 +1,7 @@
+<? /* This template renders tutorial content. */
+
+ ?>
+
 <section>
 
 <header>
@@ -5,7 +9,7 @@
     <ul><?js
         var self = this;
         children.forEach(function(t) { ?>
-        <li><?js= self.tutoriallink(t.name) ?></li>
+        <li><?js= self.linkTo(t.name) ?></li>
     <?js }); ?></ul>
     <?js } ?>
 

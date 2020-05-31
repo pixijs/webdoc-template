@@ -10,8 +10,8 @@ var self = this;
 
         <h5 class="subsection-title">Properties:</h5>
 
-        <dl><?js= this.partial('properties.tmpl', properties) ?></dl>
-
+        <?js // Don't list data-type for enum members ?>
+        <dl><?js= this.partial('components/property-table.tmpl', { properties, noType: doc.type === "EnumDoc", noAttributes: doc.type === "EnumDoc" }) ?></dl>
     <?js } ?>
 
     <?js if (doc.version) {?>
