@@ -49,11 +49,11 @@ const kind = doc.type;
     </div>
     <?js } ?>
 
-    <?js if (kind === 'EventDoc' && doc.eventType) {?>
+    <?js if (kind === 'EventDoc' && doc.dataType) {?>
         <h5>Type:</h5>
         <ul>
             <li>
-                <?js= self.partial('type.tmpl', [doc.eventType]) ?>
+                <?js= this.linkTo(doc.dataType) ?>
             </li>
         </ul>
     <?js } ?>
@@ -102,7 +102,8 @@ const kind = doc.type;
         <?js });
     } } ?>
 
-    <?js if (doc.returns && returns.length) { ?>
+    <?js if (doc.returns && returns.length
+        && !(doc.returns[0].dataType && doc.returns[0].dataType[0] === 'void')) { ?>
       <h5>Returns:</h5>
       <?js= self.partial('returns.tmpl', doc.returns) ?>
     <?js } ?>

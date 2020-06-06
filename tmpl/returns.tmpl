@@ -55,7 +55,7 @@ returns.forEach(function (ret, i) {
     <tbody>
     <?js
         var self = this;
-        returns.forEach(function(ret) {
+        returns.forEach((ret) => {
             if (!ret) {
                 return false;
             }
@@ -64,12 +64,9 @@ returns.forEach(function (ret, i) {
             <?js if (ret.name) { ?><td class="name"><code><?js= ret.name ?></code></td><?js } ?>
             <td class="type">
             <?js
-                if (ret.dataType) {
-                    ret.dataType.forEach(function(name, i) { ?>
-                        <?js= self.linkto(name, self.htmlsafe(name)) ?>
-                        <?js if (i < ret.dataType.length - 1) { ?> | <?js } ?>
-                    <?js });
-                }
+                if (ret.dataType) { ?>
+                    <?js= this.linkTo(ret.dataType) ?>
+            <?js  }
             ?>
             </td>
             <td class="description last"><?js= ret.description ?><?js if (ret.subReturns) { ?>

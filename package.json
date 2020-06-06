@@ -1,6 +1,6 @@
 {
   "name": "pixi-webdoc-template",
-  "version": "0.0.33-alpha.0",
+  "version": "0.0.34-alpha.0",
   "description": "Pixi's webdoc site template",
   "main": "publish.js",
   "scripts": {
@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@webdoc/model": "^0.1.67-alpha.0",
-    "@webdoc/template-library": "^0.1.67-alpha.0",
+    "@webdoc/template-library": "^0.1.73-alpha.0",
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
     "common-path-prefix": "^3.0.0",

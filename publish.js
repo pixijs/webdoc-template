@@ -8,7 +8,13 @@ const path = require("path");
 const {taffy} = require("taffydb");
 const helper = require("./helper");
 const hasOwnProp = Object.prototype.hasOwnProperty;
-const {TemplateRenderer, SymbolLinks, RelationsPlugin} = require("@webdoc/template-library");
+const {
+  TemplateRenderer,
+  SymbolLinks,
+  RelationsPlugin,
+  TemplatePipeline,
+  TemplateTagsResolver, // <<TemplatePipelineElement>>
+} = require("@webdoc/template-library");
 const performance = require("perf_hooks").performance;
 const {
   doc: findDoc,
@@ -96,6 +102,8 @@ const PRETTIFIER_SCRIPT_FILES = [
 ];
 
 let data;
+
+let pipeline;
 let view;
 
 let outdir;
@@ -265,7 +273,7 @@ function addSignatureReturns(f) {
   }
 
   if (source) {
-    returnTypes = addNonParamAttributes(source);
+    returnTypes = source.map((ret) => SymbolLinks.linkTo(ret.dataType));
   }
   if (returnTypes.length) {
     returnTypesString = ` ${attribsString} ${returnTypes.join("|")}`;
@@ -629,8 +637,10 @@ exports.publish = (options) => {
 
   view = new TemplateRenderer(path.join(templatePath, "tmpl"), docDatabase, docTree);
   view.installPlugin("relations", RelationsPlugin);
-
   view.plugins.relations.buildRelations();
+
+  pipeline = new TemplatePipeline(view);
+  pipeline.pipe(new TemplateTagsResolver());
 
   // claim some special filenames in advance, so the All-Powerful Overseer of Filename Uniqueness
   // doesn't try to hand them out later
@@ -871,7 +881,7 @@ exports.publish = (options) => {
       children: tutorial.children,
     };
     const tutorialPath = path.join(outdir, filename);
-    let html = view.render("tutorial.tmpl", tutorialData);
+    let html = pipeline.render("tutorial.tmpl", tutorialData);
 
     // yes, you can use {@link} in tutorials too!
     html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
@@ -906,7 +916,7 @@ function generate(title, docs, filename, resolveLinks) {
   };
 
   outpath = path.join(outdir, filename);
-  html = view.render("container.tmpl", docData);
+  html = pipeline.render("container.tmpl", docData);
 
   if (resolveLinks) {
     html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
@@ -993,7 +1003,7 @@ async function generateTutorial(title /*: string */, tutorial /*: string */, fil
   };
 
   const tutorialPath = path.join(outdir, filename);
-  const html = view.render("tutorial.tmpl", tutorialData);
+  const html = pipeline.render("tutorial.tmpl", tutorialData);
 
   // yes, you can use {@link} in tutorials too!
   // html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
