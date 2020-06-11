@@ -5,11 +5,8 @@ var typeSignature = '';
 
 if (doc.dataType) {
     typeSignature += '<span class="type-signature type">';
-    doc.dataType.slice(1).forEach(function (name) {
-        typeSignature += self.linkto(name, self.htmlsafe(name));
-        typeSignature += ' | ';
-    });
-    typeSignature = typeSignature.slice(0, -3) + '</span>';
+    typeSignature += this.linkTo(doc.dataType);
+    typeSignature += '</span>';
 } else if (doc.type !== "EventDoc" && doc.signature) {
   typeSignature = doc.signature
 }

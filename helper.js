@@ -2,6 +2,7 @@
 // This API comes from [jsdoc/lib/]jsdoc/util/templateHelper.js
 
 const {SymbolLinks} = require("@webdoc/template-library");
+const {traverse, isMethod, isFunction, isTypedef, isProperty} = require("@webdoc/model");
 
 Object.defineProperty(exports, "pathToUrl", {
   get() {
@@ -26,21 +27,50 @@ exports.resolveLinks = (i) => i;
  * @return {object} An object with `classes`, `externals`, `globals`, `mixins`, `modules`,
  * `events`, and `namespaces` properties. Each property contains an array of objects.
  */
-exports.getMembers = (data) => {
+exports.getMembers = (documentTree /*: RootDoc */) => {
   const members = {
-    classes: data({type: "ClassDoc"}).get(),
-    externals: data({type: "external"}).get(),
-    events: data({type: "EventDoc"}).get(),
-    globals: data({
-      type: ["member", "function", "constant", "typedef"],
-      memberof: {type: "RootDoc"},
-    }).get(),
-    mixins: data({type: "MixinDoc"}).get(),
-    modules: data({type: "ModuleDoc"}).get(),
-    namespaces: data({type: "NSDoc"}).get(),
-    interfaces: data({type: "InterfaceDoc"}).get(),
-    tutorials: data({type: "TutorialDoc"}).get(),
+    classes: [],
+    externals: [],
+    events: [],
+    globals: [],
+    mixins: [],
+    modules: [],
+    namespaces: [],
+    interfaces: [],
+    tutorials: [],
   };
+
+  traverse(documentTree, (doc) => {
+    if (doc.parent === documentTree &&
+        (isMethod(doc) || isFunction(doc) || isProperty(doc) || isTypedef(doc))) {
+      // members.globals.push(doc);
+      return;
+    }
+
+    switch (doc.type) {
+    case "ClassDoc":
+      members.classes.push(doc);
+      break;
+    case "ExternalDoc":
+      members.externals.push(doc);
+      break;
+    case "EventDoc":
+      members.events.push(doc);
+      break;
+    case "ModuleDoc":
+      members.modules.push(doc);
+      break;
+    case "NSDoc":
+      members.namespaces.push(doc);
+      break;
+    case "InterfaceDoc":
+      members.namespaces.push(doc);
+      break;
+    case "TutorialDoc":
+      members.tutorials.push(doc);
+      break;
+    }
+  });
 
   // strip quotes from externals, since we allow quoted names that would normally indicate a
   // namespace hierarchy (as in `@external "jquery.fn"`)
@@ -53,7 +83,7 @@ exports.getMembers = (data) => {
   });
 
   // functions that are also modules (as in `module.exports = function() {};`) are not globals
-  members.globals = members.globals.filter((doclet) => !isModuleExports(doclet));
+  // members.globals = members.globals.filter((doclet) => !isModuleExports(doclet));
 
   return members;
 };

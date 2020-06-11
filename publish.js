@@ -190,105 +190,59 @@ function getSignatureAttributes({optional, nullable}) {
 }
 
 const SignatureBuilder = {
-  appendParameters(params) {
-    return params
-      .filter((param) => param.identifer && !param.identifer.includes("."))
+  appendParameters(doc /*: Doc */) {
+    const params = doc.params;
+
+    if (!params) {
+      return;
+    }
+
+    const paramTypes = params
+      .filter((param) => param.identifier && !param.identifier.includes("."))
       .map(
         (item) => {
-          const attributes = getSignatureAttributes(item);
-
-          let itemName = item.identifer || "";
+          let itemName = item.identifier || "";
 
           if (item.variadic) {
             itemName = `&hellip;${itemName}`;
           }
 
-          if (attributes && attributes.length) {
-            itemName = `${itemName}<span class="signature-attributes">${attributes.join(", ")}</span>`;
-          }
-
           return itemName;
         });
+
+    let paramTypesString = "";
+
+    if (paramTypes.length) {
+      paramTypesString = paramTypes.join(", ");
+    }
+
+    doc.signature = `${doc.signature || ""}(${paramTypesString})`;
+  },
+  appendReturns(doc /*: Doc */) {
+    const returns = doc.returns || doc.yields;
+
+    if (!returns) {
+      return;
+    }
+
+    let returnTypes = [];
+    let returnTypesString = "";
+
+    returnTypes = returns.map((ret) => SymbolLinks.linkTo(ret.dataType));
+
+    if (returnTypes.length) {
+      returnTypesString = ` ${returnTypes.join("|")}`;
+    }
+
+    doc.signature = `<span class="signature">${doc.signature || ""}</span>` +
+          `<span class="type-signature">${returnTypesString}</span>`;
+  },
+  appendType(doc /*: Doc */) {
+    const types = doc.dataType ? SymbolLinks.linkTo(doc.dataType) : "";
+
+    doc.signature = `${doc.signature || ""}<span class="type-signature">${types}</span>`;
   },
 };
-
-function buildItemTypeStrings(item) {
-  const types = [];
-
-  if (item && item.dataType && item.dataType.length) {
-    item.dataType.slice(1).forEach((name) => {
-      types.push(linkto(name, htmlsafe(name)) );
-    });
-  }
-
-  return types;
-}
-
-function buildAttribsString(attribs) {
-  let attribsString = "";
-
-  if (attribs && attribs.length) {
-    attribsString = htmlsafe(`(${attribs.join(", ")}) `);
-  }
-
-  return attribsString;
-}
-
-function addNonParamAttributes(items) {
-  let types = [];
-
-  items.forEach((item) => {
-    types = types.concat( buildItemTypeStrings(item) );
-  });
-
-  return types;
-}
-
-function addSignatureParams(f /*: Signature */) {
-  const params = f.params ? SignatureBuilder.appendParameters(f.params) : [];
-
-  f.signature = `${f.signature || ""}(${params.join(", ")})`;
-}
-
-function addSignatureReturns(f) {
-  const attribs = [];
-  let attribsString = "";
-  let returnTypes = [];
-  let returnTypesString = "";
-  const source = f.yields || f.returns;
-
-  // jam all the return-type attributes into an array. this could create odd results (for example,
-  // if there are both nullable and non-nullable return types), but let's assume that most people
-  // who use multiple @return tags aren't using Closure Compiler type annotations, and vice-versa.
-  if (source) {
-    source.forEach((item) => {
-      helper.Attributes(item).forEach((attrib) => {
-        if (!attribs.includes(attrib)) {
-          attribs.push(attrib);
-        }
-      });
-    });
-
-    attribsString = buildAttribsString(attribs);
-  }
-
-  if (source) {
-    returnTypes = source.map((ret) => SymbolLinks.linkTo(ret.dataType));
-  }
-  if (returnTypes.length) {
-    returnTypesString = ` ${attribsString} ${returnTypes.join("|")}`;
-  }
-
-  f.signature = `<span class="signature">${f.signature || ""}</span>` +
-        `<span class="type-signature">${returnTypesString}</span>`;
-}
-
-function addSignatureTypes(f) {
-  const types = f.dataType ? buildItemTypeStrings(f) : [];
-
-  f.signature = `${f.signature || ""}<span class="type-signature">` +
-        `${types.length ? ` :${types.join("|")}` : ""}</span>`;
-}
 
 function addAttribs(f) {
   const attribs = helper.Attributes(f);
@@ -794,8 +748,8 @@ exports.publish = (options) => {
 
     // Add signature information to the doc
     if (needsSignature(doc)) {
-      addSignatureParams(doc);
-      addSignatureReturns(doc);
+      SignatureBuilder.appendParameters(doc);
+      SignatureBuilder.appendReturns(doc);
       addAttribs(doc);
     }
   });
@@ -805,12 +759,12 @@ exports.publish = (options) => {
     doc.ancestors = getAncestorLinks(doc);
 
     if (doc.type === "PropertyDoc" || doc.type === "EnumDoc") {
-      addSignatureTypes(doc);
+      SignatureBuilder.appendType(doc);
       addAttribs(doc);
     }
   });
 
-  const members = helper.getMembers(data);
+  const members = helper.getMembers(docTree);
   members.tutorials = tutorials;
   tutorials.forEach((t) => generateTutorialLinks(t));
 
