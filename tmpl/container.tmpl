@@ -61,13 +61,13 @@
             <?js } ?>
         <?js } else if (doc.type === "NSDoc" && doc.signature ) { ?>
             <?js= this.partial('method.tmpl', doc) ?>
-        <?js } else { ?>
-            <?js= this.partial('details.tmpl', doc) ?>
+        <?js }?>
 
-            <?js if (doc.examples && doc.examples.length) { ?>
-                <h3>Example<?js= doc.examples.length > 1? 's':'' ?></h3>
-                <?js= self.partial('examples.tmpl', doc.examples) ?>
-            <?js } ?>
+        <?js= this.partial('details.tmpl', doc) ?>
+
+        <?js if (doc.examples && doc.examples.length) { ?>
+            <h3>Example<?js= doc.examples.length > 1? 's':'' ?></h3>
+            <?js= self.partial('examples.tmpl', doc.examples) ?>
         <?js } ?>
     </div>
 
@@ -195,6 +195,39 @@
     <?js } ?>
 
     <?js
+        const enums = this.getEnums(currentDoc);
+
+        if (enums.length) {
+    ?>
+        <h3 class="subsection-title">Enums</h3>
+
+        <?js enums.forEach((enumDoc) => { ?>
+            <?js= self.partial("doc/enum.tmpl", enumDoc) ?>
+        <?js }); ?>
+    <?js } ?>
+
+    <?js
+        const typedefs = this.getTypedefs(doc);
+
+        if (typedefs.length) {
+    ?>
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        <?js typedefs.forEach(function(e) {
+                if (e.params) {
+            ?>
+                <?js= self.partial('method.tmpl', e) ?>
+            <?js
+                }
+                else {
+            ?>
+                <?js= self.partial('members.tmpl', e) ?>
+            <?js
+                }
+            }); ?>
+    <?js } ?>
+
+    <?js
         // Methods that are not inherited
         const _methods = hasInheritedMethods ? methods.filter(method => !method.inherited) : methods;
 
@@ -230,39 +263,6 @@
 
     <?js if (hasInheritedEvents) { ?>
         <?js= this.partial('class-hierarchy/inherited-events.tmpl', { ancestorClasses, events }) ?>
-    <?js } ?>
-
-    <?js
-        const enums = this.getEnums(currentDoc);
-
-        if (enums.length) {
-    ?>
-        <h3 class="subsection-title">Enums</h3>
-
-        <?js enums.forEach((enumDoc) => { ?>
-            <?js= self.partial("doc/enum.tmpl", enumDoc) ?>
-        <?js }); ?>
-    <?js } ?>
-
-    <?js
-        const typedefs = this.getTypedefs(doc);
-
-        if (typedefs.length) {
-    ?>
-        <h3 class="subsection-title">Type Definitions</h3>
-
-        <?js typedefs.forEach(function(e) {
-                if (e.signature) {
-            ?>
-                <?js= self.partial('method.tmpl', e) ?>
-            <?js
-                }
-                else {
-            ?>
-                <?js= self.partial('members.tmpl', e) ?>
-            <?js
-                }
-            }); ?>
     <?js } ?>
 </article>
 

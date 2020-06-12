@@ -46,6 +46,9 @@ exports.getMembers = (documentTree /*: RootDoc */) => {
       // members.globals.push(doc);
       return;
     }
+    if (doc.undocumented || doc.access === "private") {
+      return;
+    }
 
     switch (doc.type) {
     case "ClassDoc":
@@ -64,13 +67,16 @@ exports.getMembers = (documentTree /*: RootDoc */) => {
       members.namespaces.push(doc);
       break;
     case "InterfaceDoc":
-      members.namespaces.push(doc);
+      members.interfaces.push(doc);
       break;
     case "TutorialDoc":
       members.tutorials.push(doc);
       break;
     }
   });
+
+  members.namespaces.sort((m1, m2) => m1.path.localeCompare(m2.path));
+  members.classes.sort((m1, m2) => m1.path.localeCompare(m2.path));
 
   // strip quotes from externals, since we allow quoted names that would normally indicate a
   // namespace hierarchy (as in `@external "jquery.fn"`)
@@ -97,7 +103,7 @@ const toHtmlSafeString = exports.toHtmlSafeString = (str /*: string */) /*: stri
 };
 
 /*::
-type Attribute = "async" | "generator" | "abstract" | "virtual" | "private" | "protected" |
+type Attribute = "abstract" | "async" | "generator" | "abstract" | "virtual" | "private" | "protected" |
   "static" | "inner" | "readonly" | "constant" | "nullable" | "non-null"
 */
 
@@ -107,6 +113,10 @@ exports.Attributes = (doc /*: Doc */) => /*: Attribute[] */ {
 
   if (!doc) {
     return attribs;
+  }
+
+  if (doc.abstract) {
+    attribs.push("abstract");
   }
 
   if (doc.async) {

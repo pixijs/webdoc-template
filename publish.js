@@ -411,6 +411,10 @@ function Navigable(
 
   // Loop through all the members and push them into the appropriate category.
   doc.members.forEach((child) => {
+    if (child.access === "private" || child.undocumented) {
+      return;
+    }
+
     switch (child.type) {
     case "ClassDoc":
     case "NSDoc":

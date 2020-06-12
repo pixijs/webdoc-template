@@ -4,7 +4,7 @@ var self = this;
 ?>
 <dl class="details">
     <?js
-        var properties = doc.type === "NSDoc" ? [] : doc.members.filter(child => child.type === "PropertyDoc");
+        var properties = doc.type === "NSDoc" || doc.type === "ClassDoc" ? [] : doc.members.filter(child => child.type === "PropertyDoc");
         if (properties && properties.length && properties.forEach) {
     ?>
 
@@ -14,23 +14,31 @@ var self = this;
         <dl><?js= this.partial('components/property-table.tmpl', { properties, noType: doc.type === "EnumDoc", noAttributes: doc.type === "EnumDoc" }) ?></dl>
     <?js } ?>
 
+    <?js if (doc.deprecated && (doc.type === "ClassDoc" || doc.type === "NSDoc")) { ?>
+      <dt class="tag-version">Deprecated<?js= typeof doc.deprecated === "string" ? ":" : "" ?></dt>
+
+      <?js if (typeof doc.deprecated === "string") { ?>
+          <dd class="tag-version"><ul class="dummy"><li><?js= doc.deprecated ?></li></ul></dd>
+      <?js } ?>
+    <?js } ?>
+
     <?js if (doc.version) {?>
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li><?js= version ?></li></ul></dd>
+        <dt class="tag-version">Version:</dt>
+        <dd class="tag-version"><ul class="dummy"><li><?js= version ?></li></ul></dd>
     <?js } ?>
 
     <?js if (doc.since) {?>
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li><?js= since ?></dd>
+        <dt class="tag-since">Since:</dt>
+        <dd class="tag-since"><ul class="dummy"><li><?js= since ?></dd>
     <?js } ?>
 
     <?js if (doc.author && author.length) {?>
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul><?js author.forEach(function(a) { ?>
-            <li><?js= self.resolveAuthorLinks(a) ?></li>
-        <?js }); ?></ul>
-    </dd>
+        <dt class="tag-author">Author:</dt>
+        <dd class="tag-author">
+            <ul><?js author.forEach(function(a) { ?>
+                <li><?js= self.resolveAuthorLinks(a) ?></li>
+            <?js }); ?></ul>
+        </dd>
     <?js } ?>
 
     <?js if (doc.copyright) {?>
