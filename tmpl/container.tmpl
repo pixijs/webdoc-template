@@ -7,27 +7,28 @@
       if (!doc) {
         return;// happens!
       }
-
-      const currentDoc = doc;
-      const memberList = currentDoc.members;
-      const properties = this.getProperties(doc);
-      const methods = this.getMethodLikes(doc);
-      const events = this.getEvents(doc);
-
-      let ancestorClasses
-      const hasInheritedProperties = doc.extends && properties.find(prop => prop.inherits);
-      const hasInheritedMethods = doc.extends && methods.find(method => method.inherits);
-      const hasInheritedEvents = doc.extends && events.find(event => event.inherits);
-
-      if (hasInheritedProperties || hasInheritedMethods || hasInheritedEvents) {
-        ancestorClasses = this.plugins.relations.getAncestorClasses(currentDoc);
-      }
 ?>
 <?js if (doc.type === 'mainPage' || doc.type === 'PackageDoc') { ?>
     <?js= this.partial('components/main-page.tmpl', doc) ?>
-<?js } else if (doc.type === 'source') { ?>
-    <?js= self.partial('source.tmpl', doc) ?>
-<?js } else { ?>
+<?js } else if (doc.type === 'sourceFile') { ?>
+    <?js= this.partial('source.tmpl', doc) ?>
+<?js } else {
+
+        const currentDoc = doc;
+        const memberList = currentDoc.members;
+        const properties = this.getProperties(doc);
+        const methods = this.getMethodLikes(doc);
+        const events = this.getEvents(doc);
+
+        let ancestorClasses
+        const hasInheritedProperties = doc.extends && properties.find(prop => prop.inherits);
+        const hasInheritedMethods = doc.extends && methods.find(method => method.inherits);
+        const hasInheritedEvents = doc.extends && events.find(event => event.inherits);
+
+        if (hasInheritedProperties || hasInheritedMethods || hasInheritedEvents) {
+          ancestorClasses = this.plugins.relations.getAncestorClasses(currentDoc);
+        }
+?>
 
 <section>
 

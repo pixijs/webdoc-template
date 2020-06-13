@@ -17,7 +17,7 @@ const kind = doc.type;
             <?js= (doc.type !== 'EventDoc' ? doc.signature : '') ?>
             <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js
-                    if (typeof doc.deprecated === 'string') { ?>
+                    if (typeof doc.deprecated === 'string') { ?>``
                     : <span class="deprecated-info"><?js= doc.deprecated ?></span>
                     <?js }
                 ?>
@@ -32,9 +32,9 @@ const kind = doc.type;
             <?js } ?>
         </h4>
 
-        <?js if (doc.meta && env.conf.templates['default'].outputSourceFiles) {?>
+        <?js if (doc.loc && Webdoc.userConfig.template.outputSourceFiles) {?>
         <div class="tag-source">
-            <?js= self.linkto(meta.filename, meta.filename.substr(meta.filename.lastIndexOf('/') + 1) + ':' + meta.lineno, null, 'line' + meta.lineno) ?>
+            <?js= this.linkTo(doc.loc.fileName, doc.loc.fileName.substr(doc.loc.fileName.lastIndexOf('/') + 1) + ':' + (doc.loc.start ? doc.loc.start.line : ""), null, 'line' + doc.loc.start.line) ?>
         </div>
         <?js } ?>
     </div>

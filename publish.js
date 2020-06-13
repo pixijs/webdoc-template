@@ -30,6 +30,7 @@ const {
   isTypedef,
 } = require("@webdoc/model");
 const fsp = require("fs").promises;
+const fse = require("fs-extra");
 
 const isProperty = (d) => d.type === "PropertyDoc";
 
@@ -273,28 +274,6 @@ function getPathFromDoclet({meta}) {
   return meta.path && meta.path !== "null" ?
     path.join(meta.path, meta.filename) :
     meta.filename;
-}
-
-function generateSourceFiles(sourceFiles, encoding = "utf8") {
-  Object.keys(sourceFiles).forEach((file) => {
-    let source;
-    // links are keyed to the shortened path in each doclet's `meta.shortpath` property
-    const sourceOutfile = helper.getUniqueFilename(sourceFiles[file].shortened);
-
-    helper.registerLink(sourceFiles[file].shortened, sourceOutfile);
-
-    try {
-      source = {
-        kind: "source",
-        code: helper.htmlsafe( fs.readFileSync(sourceFiles[file].resolved, encoding) ),
-      };
-    } catch (e) {
-      log.error(`Error while generating source file ${file}: ${e.message}`);
-    }
-
-    generate(`Source: ${sourceFiles[file].shortened}`, [source], sourceOutfile,
-      false);
-  });
 }
 
 /**
@@ -564,6 +543,7 @@ exports.publish = (options) => {
   docDatabase = options.docDatabase;
   const opts = options.opts;
   const tutorials = options.tutorials;
+  const userConfig = global.Webdoc.userConfig;
   env = options.config;
 
   global.env = env;
@@ -632,8 +612,8 @@ exports.publish = (options) => {
     }
 
     // build a list of source files
-    if (doclet.meta) {
-      sourcePath = getPathFromDoclet(doclet);
+    if (doclet.loc) {
+      sourcePath = doclet.loc.fileName;
       sourceFiles[sourcePath] = {
         resolved: sourcePath,
         shortened: null,
@@ -773,7 +753,7 @@ exports.publish = (options) => {
   tutorials.forEach((t) => generateTutorialLinks(t));
 
   // output pretty-printed source files by default
-  outputSourceFiles = conf.default && conf.default.outputSourceFiles !== false;
+  outputSourceFiles = userConfig.template.outputSourceFiles;
   // once for all
   view.nav = buildNav(members);
   // attachModuleSymbols( find({longname: {left: "module:"}}), members.modules );
@@ -803,7 +783,9 @@ exports.publish = (options) => {
     }
 
     if (!doc) {
-      publishLog.warn(docPath + " doesn't point to a doc");
+      if (!sourceFilePaths.includes(docPath)) {
+        publishLog.warn(docPath + " doesn't point to a doc");
+      }
     } else if (doc.access !== "private" && !doc.ignore) {
       const docUrl = SymbolLinks.pathToUrl.get(docPath);
 
@@ -881,9 +863,9 @@ function generate(title, docs, filename, resolveLinks) {
   }
 
   // We don't except to write on this file again (or do we?)
-  fs.writeFile(outpath, html, "utf8", (error) => {
+  fse.outputFile(outpath, html, "utf8", (error) => {
     if (error) {
-      console.error("Couldn't save " + outpath );
+      console.error("Couldn't save " + outpath + " because " + error);
     }
   });
 }
@@ -967,4 +949,26 @@ async function generateTutorial(title /*: string */, tutorial /*: string */, fil
   // html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
 
   fs.writeFileSync(tutorialPath, html, "utf8");
+}
+
+function generateSourceFiles(sourceFiles, encoding = "utf8") {
+  Object.keys(sourceFiles).forEach((file) => {
+    let source;
+    // links are keyed to the shortened path in each doclet's `meta.shortpath` property
+    const sourceOutfile = SymbolLinks.getFileName(sourceFiles[file].shortened);
+
+    helper.registerLink(sourceFiles[file].shortened, sourceOutfile);
+
+    try {
+      source = {
+        type: "sourceFile",
+        code: helper.toHtmlSafeString( fs.readFileSync(sourceFiles[file].resolved, encoding) ),
+      };
+    } catch (e) {
+      publishLog.error("SourceFile", `Error while generating source file ${file}: ${e.message}`);
+    }
+
+    generate(`Source: ${sourceFiles[file].shortened}`, [source], sourceOutfile,
+      false);
+  });
 }
