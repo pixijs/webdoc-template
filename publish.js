@@ -32,6 +32,11 @@ const {
 const fsp = require("fs").promises;
 const fse = require("fs-extra");
 
+// (Fix for release 99): Remove FunctionDoc
+if (SymbolLinks.STANDALONE_DOCS.indexOf("FunctionDoc") >= 0) {
+  SymbolLinks.STANDALONE_DOCS.splice(SymbolLinks.STANDALONE_DOCS.indexOf("FunctionDoc"), 1);
+}
+
 const isProperty = (d) => d.type === "PropertyDoc";
 
 TemplateRenderer.prototype.linkto = helper.linkto;

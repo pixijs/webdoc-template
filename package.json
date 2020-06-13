@@ -1,6 +1,6 @@
 {
   "name": "pixi-webdoc-template",
-  "version": "0.0.38-alpha.0",
+  "version": "0.0.39-alpha.0",
   "description": "Pixi's webdoc site template",
   "main": "publish.js",
   "scripts": {
