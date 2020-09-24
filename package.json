@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webdoc-js/pixi-webdoc-template.git"
+    "url": "git+https://github.com/pixijs/pixi-webdoc-template.git"
   },
   "keywords": [
     "pixi.js",
@@ -19,9 +19,9 @@
   "author": "Shukant K. Pal <shukantpal@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/webdoc-js/pixi-webdoc-template/issues"
+    "url": "https://github.com/pixijs/pixi-webdoc-template/issues"
   },
-  "homepage": "https://github.com/webdoc-js/pixi-webdoc-template#readme",
+  "homepage": "https://github.com/pixijs/pixi-webdoc-template#readme",
   "files": [
     "publish.js",
     "helper.js",
