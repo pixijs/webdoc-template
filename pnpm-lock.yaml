@@ -1,6 +1,6 @@
 dependencies:
-  '@webdoc/model': 1.0.1
-  '@webdoc/template-library': 1.0.1
+  '@webdoc/model': 1.1.1
+  '@webdoc/template-library': 1.1.1
   code-prettify: 0.1.0
   color-themes-for-google-code-prettify: 2.0.4
   common-path-prefix: 3.0.0
@@ -41,34 +41,42 @@ packages:
     dev: false
     resolution:
       integrity: sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
+  /@babel/runtime/7.12.5:
+    dependencies:
+      regenerator-runtime: 0.13.7
+    dev: false
+    resolution:
+      integrity: sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
   /@types/color-name/1.1.1:
     dev: true
     resolution:
       integrity: sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
-  /@webdoc/model/1.0.1:
+  /@webdoc/model/1.1.1:
     dependencies:
-      '@webdoc/types': 1.0.1
+      '@webdoc/types': 1.1.1
       catharsis: 0.8.11
+      nanoid: 3.1.16
       taffydb: 2.7.3
     dev: false
     resolution:
-      integrity: sha512-OZUK174lTJ1QeEELyZYGO/OG+Nn+jhquyWX8t84d5Ab2082ATOAXoGU+yQ8PIzXzFuVOngIcs6N6go9vbBbg2Q==
-  /@webdoc/template-library/1.0.1:
+      integrity: sha512-qBIcsuvAb4YEOS9ZNbUgtUS+Vmu2g+w7L5xgGzF2zAad8MpF5JDm8NWZyvd2i8uqJThmZC3K0G0O+PDyeueN3w==
+  /@webdoc/template-library/1.1.1:
     dependencies:
-      '@webdoc/model': 1.0.1
-      '@webdoc/types': 1.0.1
+      '@webdoc/model': 1.1.1
+      '@webdoc/types': 1.1.1
       catharsis: 0.8.11
       git-branch: 2.0.1
       lodash: 4.17.20
       missionlog: 1.6.0
+      nanoid: 3.1.16
       parse-github-url: 1.0.2
     dev: false
     resolution:
-      integrity: sha512-5JKkLDH2KsfjcMj2mvrBB/nSDI/fk20o/5YQN6jorFTT11QeRfzWBDocrxxISWxykwM6/gekfUn6n/NlV1khrQ==
-  /@webdoc/types/1.0.1:
+      integrity: sha512-UViBE+Yq4KuqQCrifZtASsRGhpHNHYyIrpKlAFHpiOczNhLym9fPTg7LNlKxiBEZ0nkItyAMfFa294itc7Wtiw==
+  /@webdoc/types/1.1.1:
     dev: false
     resolution:
-      integrity: sha512-Xg4uLNN0aAUcLPHYTdrSzmQLl5zA3aE3E9qPiK4PjlulWIhBub0r5kESI/rZs1XDnk8wMA8gEt3eAEJCPcTblw==
+      integrity: sha512-pTTesZiHHppvRlpf9xw+c+Xhoxur7Ci2qv3YKoS3cSMze/uXkVcPV83G44QG7TdpRr0xBsrSI0bQxp/FhjZhuw==
   /acorn-jsx/5.3.1_acorn@7.4.0:
     dependencies:
       acorn: 7.4.0
@@ -368,6 +376,11 @@ packages:
     requiresBuild: true
     resolution:
       integrity: sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
+  /core-js/3.7.0:
+    dev: false
+    requiresBuild: true
+    resolution:
+      integrity: sha512-NwS7fI5M5B85EwpWuIwJN4i/fbisQUwLwiSNUWeXlkAZ0sbBjLEvLvFLf1uzAUV66PcEPt4xCGCmOZSxVf3xzA==
   /cross-spawn/6.0.5:
     dependencies:
       nice-try: 1.0.5
@@ -1243,8 +1256,8 @@ packages:
       integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
   /missionlog/1.6.0:
     dependencies:
-      '@babel/runtime': 7.11.2
-      core-js: 3.6.5
+      '@babel/runtime': 7.12.5
+      core-js: 3.7.0
     dev: false
     engines:
       node: '>=8.0.0'
@@ -1287,6 +1300,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
+  /nanoid/3.1.16:
+    dev: false
+    engines:
+      node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1
+    hasBin: true
+    resolution:
+      integrity: sha512-+AK8MN0WHji40lj8AEuwLOvLSbWYApQpre/aFJZD71r43wVRLrOYS4FmJOPQYon1TqB462RzrrxlfA74XRES8w==
   /nanomatch/1.2.13:
     dependencies:
       arr-diff: 4.0.0
@@ -1875,8 +1895,8 @@ packages:
     resolution:
       integrity: sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==
 specifiers:
-  '@webdoc/model': 1.0.1
-  '@webdoc/template-library': 1.0.1
+  '@webdoc/model': 1.1.1
+  '@webdoc/template-library': 1.1.1
   code-prettify: ^0.1.0
   color-themes-for-google-code-prettify: ^2.0.4
   common-path-prefix: ^3.0.0
