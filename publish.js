@@ -721,9 +721,6 @@ exports.publish = (options) => {
     generate("Global", [{kind: "globalobj"}], globalUrl);
   }
 
-  console.log(linker.linkTo("PIXI.Transform", "<NOT_FOUND>"));
-  console.log(linker.queryCache.get("PIXI.Transform"), "Cache")
-
   generateHomePage(indexUrl, docTree);
 
   for (const [id, docRecord] of linker.documentRegistry) {
