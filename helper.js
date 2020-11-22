@@ -1,17 +1,12 @@
 // @flow
 // This API comes from [jsdoc/lib/]jsdoc/util/templateHelper.js
 
-const {SymbolLinks} = require("@webdoc/template-library");
+const {LinkerPlugin} = require("@webdoc/template-library");
 const {traverse, isMethod, isFunction, isTypedef, isProperty} = require("@webdoc/model");
 
-Object.defineProperty(exports, "pathToUrl", {
-  get() {
-    return Object.fromEntries(SymbolLinks.pathToUrl);
-  },
-});
+const linker = new LinkerPlugin();
 
-// TODO {@link } {@code }
-exports.resolveLinks = (i) => i;
+exports.linker = linker;
 
 /**
  * Retrieve all of the following types of members from a set of doclets:
@@ -165,11 +160,3 @@ exports.toAttributeString = (attribs /*: Attribute */) /*: string */ => {
 
   return attribsString;
 };
-
-exports.buildLink = SymbolLinks.buildLink;
-exports.linkto = SymbolLinks.linkTo;
-exports.getAncestorLinks = (data, doc, cssClass) =>
-  SymbolLinks.getAncestorLinks(doc, cssClass);// JSDoc Compat
-exports.registerLink = SymbolLinks.registerLink;
-exports.createLink = SymbolLinks.createLink;
-exports.getUniqueFilename = SymbolLinks.generateFileName;

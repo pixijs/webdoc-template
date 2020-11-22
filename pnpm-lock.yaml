@@ -1,6 +1,6 @@
 dependencies:
-  '@webdoc/model': 1.1.1
-  '@webdoc/template-library': 1.1.1
+  '@webdoc/model': 1.1.2
+  '@webdoc/template-library': 1.1.2
   code-prettify: 0.1.0
   color-themes-for-google-code-prettify: 2.0.4
   common-path-prefix: 3.0.0
@@ -15,7 +15,7 @@ dependencies:
 devDependencies:
   eslint: 6.8.0
   eslint-config-google: 0.14.0_eslint@6.8.0
-lockfileVersion: 5.1
+lockfileVersion: 5.2
 packages:
   /@babel/code-frame/7.10.4:
     dependencies:
@@ -51,32 +51,32 @@ packages:
     dev: true
     resolution:
       integrity: sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
-  /@webdoc/model/1.1.1:
+  /@webdoc/model/1.1.2:
     dependencies:
-      '@webdoc/types': 1.1.1
+      '@webdoc/types': 1.1.2
       catharsis: 0.8.11
-      nanoid: 3.1.16
+      nanoid: 3.1.18
       taffydb: 2.7.3
     dev: false
     resolution:
-      integrity: sha512-qBIcsuvAb4YEOS9ZNbUgtUS+Vmu2g+w7L5xgGzF2zAad8MpF5JDm8NWZyvd2i8uqJThmZC3K0G0O+PDyeueN3w==
-  /@webdoc/template-library/1.1.1:
+      integrity: sha512-es1LpfFNi+DoMVsYj5XHhUyotqiJAiZ1eETeAsoDCLStJUuVu0xUMgUNMc3w3SYoNd3wJlnaVUbAprSRf3lGNQ==
+  /@webdoc/template-library/1.1.2:
     dependencies:
-      '@webdoc/model': 1.1.1
-      '@webdoc/types': 1.1.1
+      '@webdoc/model': 1.1.2
+      '@webdoc/types': 1.1.2
       catharsis: 0.8.11
       git-branch: 2.0.1
       lodash: 4.17.20
       missionlog: 1.6.0
-      nanoid: 3.1.16
+      nanoid: 3.1.18
       parse-github-url: 1.0.2
     dev: false
     resolution:
-      integrity: sha512-UViBE+Yq4KuqQCrifZtASsRGhpHNHYyIrpKlAFHpiOczNhLym9fPTg7LNlKxiBEZ0nkItyAMfFa294itc7Wtiw==
-  /@webdoc/types/1.1.1:
+      integrity: sha512-gx6Dt4WljLx7uLy/M+Q3mJ6HrOggI9XxzI46p2VPbYDDOksTP0Oq40M9qQps1oiQBlMEjl6GXJPAcPhSXHayOg==
+  /@webdoc/types/1.1.2:
     dev: false
     resolution:
-      integrity: sha512-pTTesZiHHppvRlpf9xw+c+Xhoxur7Ci2qv3YKoS3cSMze/uXkVcPV83G44QG7TdpRr0xBsrSI0bQxp/FhjZhuw==
+      integrity: sha512-6XDJ7XkKM+oSjTQBkBEFMaKBnU2xW1ZYorfuN83ufNWtoU/SfrMGyVs0d5Eag6h4IQO23uIi4U9fXPs6pACfhQ==
   /acorn-jsx/5.3.1_acorn@7.4.0:
     dependencies:
       acorn: 7.4.0
@@ -1300,13 +1300,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
-  /nanoid/3.1.16:
+  /nanoid/3.1.18:
     dev: false
     engines:
       node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1
     hasBin: true
     resolution:
-      integrity: sha512-+AK8MN0WHji40lj8AEuwLOvLSbWYApQpre/aFJZD71r43wVRLrOYS4FmJOPQYon1TqB462RzrrxlfA74XRES8w==
+      integrity: sha512-rndlDjbbHbcV3xi+R2fpJ+PbGMdfBxz5v1fATIQFq0DP64FsicQdwnKLy47K4kZHdRpmQXtz24eGsxQqamzYTA==
   /nanomatch/1.2.13:
     dependencies:
       arr-diff: 4.0.0
@@ -1895,8 +1895,8 @@ packages:
     resolution:
       integrity: sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==
 specifiers:
-  '@webdoc/model': 1.1.1
-  '@webdoc/template-library': 1.1.1
+  '@webdoc/model': 1.1.2
+  '@webdoc/template-library': 1.1.2
   code-prettify: ^0.1.0
   color-themes-for-google-code-prettify: ^2.0.4
   common-path-prefix: ^3.0.0

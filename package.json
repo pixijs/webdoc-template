@@ -29,8 +29,8 @@
     "tmpl"
   ],
   "dependencies": {
-    "@webdoc/model": "1.1.1",
-    "@webdoc/template-library": "1.1.1",
+    "@webdoc/model": "1.1.2",
+    "@webdoc/template-library": "1.1.2",
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
     "common-path-prefix": "^3.0.0",

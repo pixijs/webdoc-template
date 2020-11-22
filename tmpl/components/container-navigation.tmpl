@@ -43,7 +43,7 @@ var canStyleAsNamespace = function(item) {
             <?js
                 item.members.forEach(function (v) {
             ?>
-                <li class="<?js if (!v.inherited && !v.inherits) { ?>parent<?js } ?> <?js if (v.deprecated) { ?>status-deprecated<?js } ?>" data-name="<?js= v.path ?>"><?js= self.linkto(v.path, v.name) ?></li>
+                <li class="<?js if (!v.inherited && !v.inherits) { ?>parent<?js } ?> <?js if (v.deprecated) { ?>status-deprecated<?js } ?>" data-name="<?js= v.path ?>"><?js= self.linkTo(v.path, v.name) ?></li>
             <?js
                 });
             }
@@ -74,7 +74,7 @@ var canStyleAsNamespace = function(item) {
             <?js
                 item.typedefs.forEach(function (v) {
             ?>
-                <li class="parent" data-name="<?js= v.path ?>"><?js= self.linkto(v.path, v.name) ?></li>
+                <li class="parent" data-name="<?js= v.path ?>"><?js= self.linkTo(v.path, v.name) ?></li>
             <?js
                 });
             }
@@ -92,7 +92,7 @@ var canStyleAsNamespace = function(item) {
             <?js
                 item.interfaces.forEach(function (v) {
             ?>
-                <li class="parent" data-name="<?js= v.path ?>"><?js= self.linkto(v.path, v.name) ?></li>
+                <li class="parent" data-name="<?js= v.path ?>"><?js= self.linkTo(v.path, v.name) ?></li>
             <?js
                 });
             }
@@ -129,7 +129,7 @@ var canStyleAsNamespace = function(item) {
             <?js
                 item.events.forEach(function (v) {
             ?>
-                <li class="<?js if (!v.inherited && !v.inherits) { ?>parent<?js } ?>" data-name="<?js= v.path ?>"><?js= self.linkto(v.path, v.name) ?></li>
+                <li class="<?js if (!v.inherited && !v.inherits) { ?>parent<?js } ?>" data-name="<?js= v.path ?>"><?js= self.linkTo(v.path, v.name) ?></li>
             <?js
                 });
             }

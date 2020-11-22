@@ -5,42 +5,29 @@ const _ = require("lodash");
 const commonPathPrefix = require("common-path-prefix");
 const fs = require("fs");
 const path = require("path");
-const {taffy} = require("taffydb");
+// const {taffy} = require("taffydb");
 const helper = require("./helper");
 const hasOwnProp = Object.prototype.hasOwnProperty;
 const {
   TemplateRenderer,
-  SymbolLinks,
   RelationsPlugin,
   TemplatePipeline,
   TemplateTagsResolver, // <<TemplatePipelineElement>>
 } = require("@webdoc/template-library");
 const performance = require("perf_hooks").performance;
 const {
-  doc: findDoc,
   isClass,
   isInterface,
   isNamespace,
   isMixin,
   isModule,
   isExternal,
-  isMethod,
-  isFunction,
-  isEvent,
-  isTypedef,
+  traverse,
 } = require("@webdoc/model");
 const fsp = require("fs").promises;
 const fse = require("fs-extra");
 
-// (Fix for release 99): Remove FunctionDoc
-if (SymbolLinks.STANDALONE_DOCS.indexOf("FunctionDoc") >= 0) {
-  SymbolLinks.STANDALONE_DOCS.splice(SymbolLinks.STANDALONE_DOCS.indexOf("FunctionDoc"), 1);
-}
-
-const isProperty = (d) => d.type === "PropertyDoc";
-
-TemplateRenderer.prototype.linkto = helper.linkto;
-TemplateRenderer.prototype.linkTo = helper.linkto;
+const {linker} = helper;
 
 TemplateRenderer.prototype.resolveDocLink = function(docLink) {
   if (typeof docLink === "string") {
@@ -66,7 +53,7 @@ TemplateRenderer.prototype.generateRandomID = () => `${randomDice++}`;
 
 const {Log, LogLevel, tag} = require("missionlog");
 
-const linkto = helper.linkto;
+const linkto = (...args) => linker.linkTo(...args);
 const klawSync = require("klaw-sync");
 
 let publishLog;
@@ -83,11 +70,6 @@ lsSync = ((dir, opts = {}) => {
 
   return files.map((f) => f.path);
 });
-
-
-const log = (s) => {
-  console.log(s);
-};
 
 let env;
 
@@ -130,23 +112,6 @@ function tutoriallink(tutorial) {
   });
 }
 
-function getAncestorLinks(doclet) {
-  return helper.getAncestorLinks(data, doclet);
-}
-
-function hashToLink(doclet, hash) {
-  let url;
-
-  if ( !/^(#.+)/.test(hash) ) {
-    return hash;
-  }
-
-  url = helper.createLink(doclet);
-  url = url.replace(/(#.+|$)/, hash);
-
-  return `<a href="${url}">${hash}</a>`;
-}
-
 /*::
 type Signature = {
   params: [Param],
@@ -177,22 +142,6 @@ function needsSignature(doc /*: Doc */) /*: boolean */ {
   }*/
 
   return false;
-}
-
-function getSignatureAttributes({optional, nullable}) {
-  const attributes = [];
-
-  if (optional) {
-    attributes.push("opt");
-  }
-
-  if (nullable === true) {
-    attributes.push("nullable");
-  } else if (nullable === false) {
-    attributes.push("non-null");
-  }
-
-  return attributes;
 }
 
 const SignatureBuilder = {
@@ -234,7 +183,7 @@ const SignatureBuilder = {
     let returnTypes = [];
     let returnTypesString = "";
 
-    returnTypes = returns.map((ret) => SymbolLinks.linkTo(ret.dataType));
+    returnTypes = returns.map((ret) => linker.linkTo(ret.dataType));
 
     if (returnTypes.length) {
       returnTypesString = ` ${returnTypes.join("|")}`;
@@ -244,7 +193,7 @@ const SignatureBuilder = {
           `<span class="type-signature">${returnTypesString}</span>`;
   },
   appendType(doc /*: Doc */) {
-    const types = doc.dataType ? SymbolLinks.linkTo(doc.dataType) : "";
+    const types = doc.dataType ? linker.linkTo(doc.dataType) : "";
 
     doc.signature = `${doc.signature || ""}<span class="type-signature">${types}</span>`;
   },
@@ -559,8 +508,6 @@ exports.publish = (options) => {
   let conf;
   let cwd;
   let fromDir;
-  let globalUrl;
-  let indexUrl;
   let outputSourceFiles;
   let packageInfo;
   const sourceFilePaths = [];
@@ -569,29 +516,27 @@ exports.publish = (options) => {
   let staticFilePaths;
   let staticFiles;
   let staticFileScanner;
-  let templatePath;
 
   data = docDatabase;
 
   conf = env.conf.templates || {};
   conf.default = conf.default || {};
 
-  templatePath = __dirname;
+  const templatePath = __dirname;
 
   view = new TemplateRenderer(path.join(templatePath, "tmpl"), docDatabase, docTree);
   view.installPlugin("relations", RelationsPlugin);
+  view.installPlugin("linker", linker);
   view.plugins.relations.buildRelations();
+
+  view.linkto = view.linkTo;
 
   pipeline = new TemplatePipeline(view);
   pipeline.pipe(new TemplateTagsResolver());
 
-  // claim some special filenames in advance, so the All-Powerful Overseer of Filename Uniqueness
-  // doesn't try to hand them out later
-  indexUrl = helper.getUniqueFilename("index") + ".html";
-  // don't call registerLink() on this one! 'index' is also a valid longname
-
-  globalUrl = helper.getUniqueFilename("global") + ".html";
-  // helper.registerLink("global", globalUrl);
+  // Reserve special files
+  const indexUrl = linker.createURI("index");
+  const globalUrl = linker.createURI("global");
 
   // set up templating
   view.layout = conf.default.layoutFile ?
@@ -605,6 +550,17 @@ exports.publish = (options) => {
   data.sort("path, version, since");
   // helper.addEventListeners(data);
 
+  const idToDoc = new Map();
+
+  traverse(docTree, (doc) => {
+    if (doc.type === "RootDoc") {
+      doc.packages.forEach((pkg) => {
+        idToDoc.set(pkg.id, pkg);
+      });
+    }
+    idToDoc.set(doc.id, doc);
+  });
+
   data().each((doclet) => {
     let sourcePath;
 
@@ -612,7 +568,7 @@ exports.publish = (options) => {
 
     if (doclet.see) {
       doclet.see.forEach((seeItem, i) => {
-        doclet.see[i] = hashToLink(doclet, seeItem);
+        doclet.see[i] = linker.linkTo(seeItem);
       });
     }
 
@@ -712,9 +668,10 @@ exports.publish = (options) => {
   // Create a hyperlink for each documented symbol.
   data().each((doclet) => {
     let docletPath;
-    const url = helper.createLink(doclet);
+    linker.getURI(doclet);
 
-    helper.registerLink(doclet.path, url);
+    // Make the query-cache hot for all document paths
+    // linker.linkTo(doclet.path);
 
     // add a shortened version of the full path
     if (doclet.meta) {
@@ -727,14 +684,6 @@ exports.publish = (options) => {
   });
 
   data().each((doc) => {
-    const url = SymbolLinks.pathToUrl.get(doc.path);
-
-    if (url.includes("#")) {
-      doc.id = SymbolLinks.pathToUrl.get(doc.path).split(/#/).pop();
-    } else {
-      doc.id = doc.name;
-    }
-
     // Add signature information to the doc
     if (needsSignature(doc)) {
       SignatureBuilder.appendParameters(doc);
@@ -745,7 +694,7 @@ exports.publish = (options) => {
 
   // Link doc ancestors & finish up signatures! (after URL generation)
   data().each((doc) => {
-    doc.ancestors = getAncestorLinks(doc);
+    doc.ancestors = linker.linksToAncestors(doc);
 
     if (doc.type === "PropertyDoc" || doc.type === "EnumDoc") {
       SignatureBuilder.appendType(doc);
@@ -772,27 +721,23 @@ exports.publish = (options) => {
     generate("Global", [{kind: "globalobj"}], globalUrl);
   }
 
+  console.log(linker.linkTo("PIXI.Transform", "<NOT_FOUND>"));
+  console.log(linker.queryCache.get("PIXI.Transform"), "Cache")
+
   generateHomePage(indexUrl, docTree);
 
-  const docPaths = SymbolLinks.pathToUrl.keys();
-  let docPathEntry = docPaths.next();
-  let docPath = docPaths.next().value;
-
-  while (!docPathEntry.done) {
+  for (const [id, docRecord] of linker.documentRegistry) {
     let doc;
 
     try {
-      doc = findDoc(docPath, docTree);
+      doc = idToDoc.get(id);
     } catch (e) {
-      console.error(docPath + " crashed findDoc in @webdoc/model");
+      console.error(id + " corrupted into idToDoc map, how?");
+      continue;
     }
 
-    if (!doc) {
-      if (!sourceFilePaths.includes(docPath)) {
-        publishLog.warn(docPath + " doesn't point to a doc");
-      }
-    } else if (doc.access !== "private" && !doc.ignore) {
-      const docUrl = SymbolLinks.pathToUrl.get(docPath);
+    if (doc && doc.access !== "private" && !doc.ignore) {
+      const docUrl = docRecord.uri;
 
       if (isClass(doc)) {
         generate(`Class: ${doc.name}`, [doc], docUrl);
@@ -808,9 +753,6 @@ exports.publish = (options) => {
         generate(`External: ${doc.name}`, [doc], docUrl);
       }
     }
-
-    docPathEntry = docPaths.next();
-    docPath = docPathEntry.value;
   }
 
   console.log(`pixi-webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`);
@@ -846,26 +788,15 @@ exports.publish = (options) => {
 };
 
 // Generate the HTML file with the documentation of all docs
-function generate(title, docs, filename, resolveLinks) {
-  let docData;
-  let html;
-  let outpath;
-
-  resolveLinks = resolveLinks !== false;
-
-  docData = {
+function generate(title, docs, filename) {
+  const docData = {
     env: env,
     title: title,
     docs: docs,
     fileName: filename,
   };
-
-  outpath = path.join(outdir, filename);
-  html = pipeline.render("container.tmpl", docData);
-
-  if (resolveLinks) {
-    html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
-  }
+  const outpath = path.join(outdir, filename);
+  const html = pipeline.render("container.tmpl", docData);
 
   // We don't except to write on this file again (or do we?)
   fse.outputFile(outpath, html, "utf8", (error) => {
@@ -924,7 +855,7 @@ function generateTutorialLinks(tutorial /*: TutorialDoc */) {
     return;
   }
 
-  SymbolLinks.createLink(tutorial);
+  linker.getURI(tutorial);
 
   tutorial.members.forEach((child) => {
     generateTutorialLinks(child);
@@ -950,9 +881,6 @@ async function generateTutorial(title /*: string */, tutorial /*: string */, fil
   const tutorialPath = path.join(outdir, filename);
   const html = pipeline.render("tutorial.tmpl", tutorialData);
 
-  // yes, you can use {@link} in tutorials too!
-  // html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
-
   fs.writeFileSync(tutorialPath, html, "utf8");
 }
 
@@ -960,9 +888,10 @@ function generateSourceFiles(sourceFiles, encoding = "utf8") {
   Object.keys(sourceFiles).forEach((file) => {
     let source;
     // links are keyed to the shortened path in each doclet's `meta.shortpath` property
-    const sourceOutfile = SymbolLinks.getFileName(sourceFiles[file].shortened);
+    const sourceOutfile = linker.createURI(sourceFiles[file].shortened);
 
-    helper.registerLink(sourceFiles[file].shortened, sourceOutfile);
+    // Hack query cache point source file to URI
+    linker.queryCache.set(sourceFiles[file].shortened, sourceOutfile);
 
     try {
       source = {
