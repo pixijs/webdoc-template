@@ -1,6 +1,6 @@
 dependencies:
-  '@webdoc/model': 1.1.2
-  '@webdoc/template-library': 1.1.2
+  '@webdoc/model': 1.1.3
+  '@webdoc/template-library': 1.1.3
   code-prettify: 0.1.0
   color-themes-for-google-code-prettify: 2.0.4
   common-path-prefix: 3.0.0
@@ -51,19 +51,19 @@ packages:
     dev: true
     resolution:
       integrity: sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
-  /@webdoc/model/1.1.2:
+  /@webdoc/model/1.1.3:
     dependencies:
-      '@webdoc/types': 1.1.2
+      '@webdoc/types': 1.1.3
       catharsis: 0.8.11
       nanoid: 3.1.18
       taffydb: 2.7.3
     dev: false
     resolution:
-      integrity: sha512-es1LpfFNi+DoMVsYj5XHhUyotqiJAiZ1eETeAsoDCLStJUuVu0xUMgUNMc3w3SYoNd3wJlnaVUbAprSRf3lGNQ==
-  /@webdoc/template-library/1.1.2:
+      integrity: sha512-YyMy2tOCx9UOzAz365wdMKH32zYPDKFCpRCwDaSj+vXnzGPop1ctgNFjmEmmvwBiLkJ/RE4IxOlOaphti71OhQ==
+  /@webdoc/template-library/1.1.3:
     dependencies:
-      '@webdoc/model': 1.1.2
-      '@webdoc/types': 1.1.2
+      '@webdoc/model': 1.1.3
+      '@webdoc/types': 1.1.3
       catharsis: 0.8.11
       git-branch: 2.0.1
       lodash: 4.17.20
@@ -72,11 +72,11 @@ packages:
       parse-github-url: 1.0.2
     dev: false
     resolution:
-      integrity: sha512-gx6Dt4WljLx7uLy/M+Q3mJ6HrOggI9XxzI46p2VPbYDDOksTP0Oq40M9qQps1oiQBlMEjl6GXJPAcPhSXHayOg==
-  /@webdoc/types/1.1.2:
+      integrity: sha512-YDcVq+RQzSnNNWoxIMDIRX2zU3QQNPVh4q/Nl98RJAvO8GhVp+7vlceUlvCh/9nQrPLHQ8m95bLlMwZlU2E/FA==
+  /@webdoc/types/1.1.3:
     dev: false
     resolution:
-      integrity: sha512-6XDJ7XkKM+oSjTQBkBEFMaKBnU2xW1ZYorfuN83ufNWtoU/SfrMGyVs0d5Eag6h4IQO23uIi4U9fXPs6pACfhQ==
+      integrity: sha512-LdtO/kc2TAEtFxxJRE6YmX5iu6XEJVvzir4+3XlGo5wWfadHE83qmGdkdC46RSxH309HWN6dKXlsfDdBvEP00w==
   /acorn-jsx/5.3.1_acorn@7.4.0:
     dependencies:
       acorn: 7.4.0
@@ -376,11 +376,11 @@ packages:
     requiresBuild: true
     resolution:
       integrity: sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
-  /core-js/3.7.0:
+  /core-js/3.8.0:
     dev: false
     requiresBuild: true
     resolution:
-      integrity: sha512-NwS7fI5M5B85EwpWuIwJN4i/fbisQUwLwiSNUWeXlkAZ0sbBjLEvLvFLf1uzAUV66PcEPt4xCGCmOZSxVf3xzA==
+      integrity: sha512-W2VYNB0nwQQE7tKS7HzXd7r2y/y2SVJl4ga6oH/dnaLFzM0o2lB2P3zCkWj5Wc/zyMYjtgd5Hmhk0ObkQFZOIA==
   /cross-spawn/6.0.5:
     dependencies:
       nice-try: 1.0.5
@@ -1257,7 +1257,7 @@ packages:
   /missionlog/1.6.0:
     dependencies:
       '@babel/runtime': 7.12.5
-      core-js: 3.7.0
+      core-js: 3.8.0
     dev: false
     engines:
       node: '>=8.0.0'
@@ -1895,8 +1895,8 @@ packages:
     resolution:
       integrity: sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==
 specifiers:
-  '@webdoc/model': 1.1.2
-  '@webdoc/template-library': 1.1.2
+  '@webdoc/model': 1.1.3
+  '@webdoc/template-library': 1.1.3
   code-prettify: ^0.1.0
   color-themes-for-google-code-prettify: ^2.0.4
   common-path-prefix: ^3.0.0
