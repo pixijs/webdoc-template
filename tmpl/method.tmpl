@@ -6,7 +6,7 @@ const kind = doc.type;
 <dt>
     <div class="nameContainer">
         <h4 class="name" id="<?js= doc.name ?>">
-            <a class="share-icon" href="#<?js= id ?>"><span class="glyphicon glyphicon-link"></span></a>
+            <a class="share-icon" href="#<?js= doc.name ?>"><span class="glyphicon glyphicon-link"></span></a>
             <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>">
               <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") { ?>
                   <?js= "new " + doc.parent.path ?>
