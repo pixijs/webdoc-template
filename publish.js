@@ -752,7 +752,7 @@ exports.publish = (options) => {
     }
   }
 
-  console.log(`pixi-webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`);
+  console.log(`@pixi/webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`);
 
   /*
 

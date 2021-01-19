@@ -1,14 +1,17 @@
 {
-  "name": "pixi-webdoc-template",
+  "name": "@pixi/webdoc-template",
   "version": "1.1.4",
-  "description": "Pixi's webdoc site template",
+  "description": "PixiJS' webdoc template for API documentation",
   "main": "publish.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pixijs/pixi-webdoc-template.git"
+    "url": "git+https://github.com/pixijs/webdoc-template.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "pixi.js",
@@ -19,9 +22,9 @@
   "author": "Shukant K. Pal <shukantpal@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pixijs/pixi-webdoc-template/issues"
+    "url": "https://github.com/pixijs/webdoc-template/issues"
   },
-  "homepage": "https://github.com/pixijs/pixi-webdoc-template#readme",
+  "homepage": "https://github.com/pixijs/webdoc-template#readme",
   "files": [
     "publish.js",
     "helper.js",
