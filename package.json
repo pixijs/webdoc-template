@@ -4,6 +4,7 @@
   "description": "PixiJS' webdoc template for API documentation",
   "main": "publish.js",
   "scripts": {
+    "lint": "eslint *.js",
     "postversion": "git push && git push --tags"
   },
   "repository": {
