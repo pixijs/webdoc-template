@@ -4,7 +4,7 @@
   "description": "PixiJS' webdoc template for API documentation",
   "main": "publish.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,12 @@
     "static",
     "tmpl"
   ],
+  "engines": {
+    "node": ">= 12",
+    "pnpm": "please-use-npm",
+    "yarn": "please-use-npm",
+    "npm": ">= 6"
+  },
   "dependencies": {
     "@webdoc/model": "1.1.3",
     "@webdoc/template-library": "1.1.3",
