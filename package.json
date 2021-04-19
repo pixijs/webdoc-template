@@ -1,6 +1,6 @@
 {
   "name": "@pixi/webdoc-template",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "PixiJS' webdoc template for API documentation",
   "main": "publish.js",
   "scripts": {
