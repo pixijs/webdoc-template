@@ -123,8 +123,8 @@
             <?js } ?>
 
             <td class="description last">
+                <?js= prop.brief ?>
                 <?js= prop.description ?>
-
                 <?js
                   // Add sub-properties inside the description cell
                   const subprops = this.getProperties(prop);
