@@ -39,8 +39,8 @@
     "npm": ">= 6"
   },
   "dependencies": {
-    "@webdoc/model": "1.1.3",
-    "@webdoc/template-library": "1.1.3",
+    "@webdoc/model": "1.2.1",
+    "@webdoc/template-library": "1.2.1",
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
     "common-path-prefix": "^3.0.0",
