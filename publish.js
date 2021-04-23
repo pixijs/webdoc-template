@@ -636,7 +636,7 @@ exports.publish = (options) => {
   });
 
   // copy user-specified static files to outdir
-  if (conf.default.staticFiles) {
+  /*if (conf.default.staticFiles) {
     // The canonical property name is `include`. We accept `paths` for backwards compatibility
     // with a bug in JSDoc 3.2.x.
     staticFilePaths = conf.default.staticFiles.include ||
@@ -659,7 +659,7 @@ exports.publish = (options) => {
         fs.copyFileSync(fileName, toPath);
       });
     });
-  }
+  }*/
 
   if (sourceFilePaths.length) {
     sourceFiles = shortenPaths( sourceFiles, commonPathPrefix(sourceFilePaths) );
