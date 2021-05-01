@@ -6,6 +6,8 @@ const {traverse, isMethod, isFunction, isTypedef, isProperty} = require("@webdoc
 
 const linker = new LinkerPlugin();
 
+linker.fileLayout = "linear";
+
 exports.linker = linker;
 
 /**
