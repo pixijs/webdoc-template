@@ -496,6 +496,7 @@ exports.publish = (options) => {
 
   docDatabase = options.docDatabase;
   const opts = options.opts;
+  const manifest = options.manifest;
   const tutorials = options.tutorials;
   const userConfig = global.Webdoc.userConfig;
   env = options.config;
@@ -668,7 +669,15 @@ exports.publish = (options) => {
   // Create a hyperlink for each documented symbol.
   data().each((doclet) => {
     let docletPath;
-    linker.getURI(doclet);
+    const uri = linker.getURI(doclet);
+
+    if (manifest && doclet.id) {
+      if (!manifest.registry[doclet.id]) {
+        manifest.registry[doclet.id] = {};
+      }
+
+      manifest.registry[doclet.id].uri = uri;
+    }
 
     // Make the query-cache hot for all document paths
     // linker.linkTo(doclet.path);
