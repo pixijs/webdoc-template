@@ -5,7 +5,9 @@
   "main": "publish.js",
   "scripts": {
     "lint": "eslint *.js",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
   },
   "repository": {
     "type": "git",
@@ -56,7 +58,18 @@
     "@webdoc/template-library": "^1.2.1"
   },
   "devDependencies": {
+    "clean-package": "^1.0.1",
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "scripts",
+      "engines",
+      "pre-commit",
+      "devDependencies"
+    ]
   }
 }
