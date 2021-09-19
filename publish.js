@@ -897,7 +897,7 @@ function generateSourceFiles(sourceFiles, encoding = "utf8") {
     const sourceOutfile = linker.createURI(sourceFiles[file].shortened);
 
     // Hack query cache point source file to URI
-    linker.queryCache.set(sourceFiles[file].shortened, sourceOutfile);
+    linker.queryCache.set(sourceFiles[file].resolved, sourceOutfile);
 
     try {
       source = {
