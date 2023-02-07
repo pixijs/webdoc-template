@@ -2,65 +2,61 @@
   "name": "@pixi/webdoc-template",
   "version": "1.5.5",
   "description": "PixiJS' webdoc template for API documentation",
-  "main": "publish.js",
-  "scripts": {
-    "lint": "eslint *.js",
-    "postversion": "git push && git push --tags",
-    "prepack": "clean-package",
-    "postpack": "clean-package restore"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pixijs/webdoc-template.git"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "keywords": [
     "pixi.js",
     "pixi",
     "webdoc",
     "documentation"
   ],
-  "author": "Shukant K. Pal <shukantpal@outlook.com>",
-  "license": "MIT",
+  "homepage": "https://github.com/pixijs/webdoc-template#readme",
   "bugs": {
     "url": "https://github.com/pixijs/webdoc-template/issues"
   },
-  "homepage": "https://github.com/pixijs/webdoc-template#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixijs/webdoc-template.git"
+  },
+  "license": "MIT",
+  "author": "Shukant K. Pal <shukantpal@outlook.com>",
+  "main": "publish.js",
   "files": [
-    "publish.js",
-    "helper.js",
-    "static",
-    "tmpl"
+    "/dist"
   ],
-  "engines": {
-    "node": ">= 12",
-    "pnpm": "please-use-npm",
-    "yarn": "please-use-npm",
-    "npm": ">= 6"
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint --cache --ext .ts src --ignore-path .gitignore",
+    "lint:fix": "npm run lint -- --fix",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore",
+    "postversion": "git push && git push --tags",
+    "watch": "tsc -w"
   },
   "dependencies": {
-    "code-prettify": "^0.1.0",
-    "color-themes-for-google-code-prettify": "^2.0.4",
-    "common-path-prefix": "^3.0.0",
-    "fs-extra": "^9.0.1",
-    "klaw-sync": "^6.0.0",
-    "lodash": "*",
-    "markdown-it": "^12.3.2",
-    "markdown-it-highlightjs": "^3.6.0",
-    "missionlog": "^1.6.0",
-    "open-sans-fonts": "^1.6.2",
-    "taffydb": "^2.7.3"
-  },
-  "peerDependencies": {
-    "@webdoc/model": "^1.2.1",
-    "@webdoc/template-library": "^1.2.1"
+    "fs-extra": "^11.1.0",
+    "markdown-table": "^3.0.3",
+    "node-html-markdown": "^1.3.0"
   },
   "devDependencies": {
+    "@pixi/eslint-config": "^4.0.1",
+    "@types/node": "^18.13.0",
     "clean-package": "^1.0.1",
-    "eslint": "^6.8.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint": "^8.33.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "@webdoc/model": "^2.2.0",
+    "@webdoc/template-library": "^2.2.0"
+  },
+  "engines": {
+    "node": ">= 12",
+    "npm": ">= 6",
+    "pnpm": "please-use-npm",
+    "yarn": "please-use-npm"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "clean-package": {
     "indent": 2,
