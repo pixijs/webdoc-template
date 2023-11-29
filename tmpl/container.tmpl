@@ -35,8 +35,7 @@
 <header>
   <div class="header content-size">
       <h2>
-        <?js if (doc.ancestors && doc.ancestors.length) { ?>
-          <span class="ancestors"><?js= doc.ancestors.join('.') ?></span><?js } ?><?js= (doc.ancestors && doc.ancestors.length ? '.' : '') + (doc.name || title) ?>
+        <?js=(doc.name || title) ?>
 
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
@@ -79,7 +78,7 @@
           <?js doc.extends.forEach(function(doc) {
               const symbolPath = typeof doc === "string"? doc : doc.path; ?>
 
-            <li><?js= self.linkto(symbolPath, symbolPath) ?></li>
+            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>
@@ -91,7 +90,7 @@
           <?js doc.implements.forEach(function(doc) {
               const symbolPath = typeof doc === "string" ? doc : doc.path; ?>
 
-            <li><?js= self.linkto(symbolPath, symbolPath) ?></li>
+            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>
@@ -103,7 +102,7 @@
           <?js doc.mixes.forEach(function(doc) {
             const symbolPath = typeof doc === "string" ? doc : doc.path; ?>
 
-            <li><?js= self.linkto(symbolPath, symbolPath) ?></li>
+            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>

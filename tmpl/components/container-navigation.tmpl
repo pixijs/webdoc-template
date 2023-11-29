@@ -29,9 +29,28 @@ var canStyleAsNamespace = function(item) {
                     <span class="namespaceTag"><span class="glyphicon glyphicon-education"></span></span>
                     <?js= self.tutoriallink(item.path) ?>
                 <?js } else { ?>
-                    <?js= this.linkTo(item.path, item.path === 'global' ? 'Global' : item.path) ?>
+                    <?js= this.linkToSymbolPath(item.path, item.path === 'global' ? 'Global' : item.path) ?>
                 <?js } ?>
             </span>
+
+            <?js
+            if (item.classes) {
+            ?>
+            <ul class="classes itemMembers">
+            <?js
+            if (item.classes.length) {
+            ?>
+            <span class="subtitle">Classes</span>
+            <?js
+                item.classes.forEach(function (v) {
+            ?>
+                <li class="parent" data-name="<?js= v.path ?>"><?js= self.linkTo(v.path, v.name) ?></li>
+            <?js
+                });
+            }}
+            ?>
+            </ul>
+
             <?js
             if (item.members) {
             ?>

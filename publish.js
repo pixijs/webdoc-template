@@ -54,6 +54,22 @@ TemplateRenderer.prototype.generateRandomID = () => `${randomDice++}`;
 const {Log, LogLevel, tag} = require("missionlog");
 
 const linkto = (...args) => linker.linkTo(...args);
+const linkToDataType = (dataType) => {
+  const out = linker.linkTo(dataType);
+  // Remove the parent from the label within the <a> tag (eg. 'scene.') and also replacing '#' with '.', if applicable.
+  if (out.includes("#")) {
+    return out.replace(/(<a href="[^"]+">)[^<]*?(\w+\.)?(\w+)#(\w+)(.*?<\/a>)/, "$1$3.$4$5");
+  }
+  return out.replace(/(<a href="[^"]+">)[^<]*?(\w+\.)?(.*?<\/a>)/, "$1$3");
+};
+const linkToSymbolPath = (symbolPath, path = symbolPath) => {
+  const extracted = path.split(".").pop();
+  // Remove the parent from the link text (eg. 'scene.').
+  return linker.linkTo(symbolPath, extracted);
+};
+TemplateRenderer.prototype.linkToDataType = linkToDataType;
+TemplateRenderer.prototype.linkToSymbolPath = linkToSymbolPath;
+
 const klawSync = require("klaw-sync");
 
 let publishLog;
@@ -183,7 +199,7 @@ const SignatureBuilder = {
     let returnTypes = [];
     let returnTypesString = "";
 
-    returnTypes = returns.map((ret) => linker.linkTo(ret.dataType));
+    returnTypes = returns.map((ret) => linkToDataType(ret.dataType));
 
     if (returnTypes.length) {
       returnTypesString = ` ${returnTypes.join("|")}`;
@@ -193,7 +209,7 @@ const SignatureBuilder = {
           `<span class="type-signature">${returnTypesString}</span>`;
   },
   appendType(doc /*: Doc */) {
-    const types = doc.dataType ? linker.linkTo(doc.dataType) : "";
+    const types = doc.dataType ? linkToDataType(doc.dataType) : "";
 
     doc.signature = `${doc.signature || ""}<span class="type-signature">${types}</span>`;
   },
@@ -334,6 +350,7 @@ function Navigable(
   this.path = doc.path;
   this.deprecated = doc.deprecated;
 
+  const classes = this.classes = [];
   const properties = this.members = [];
   const methods = this.methods = [];
   const events = this.events = [];
@@ -350,6 +367,8 @@ function Navigable(
 
     switch (child.type) {
     case "ClassDoc":
+      classes.push(child);
+      break;
     case "NSDoc":
       break;
     case "PropertyDoc":
