@@ -45,6 +45,10 @@ $(function() {
   const $nav = $(".navigation");
   const $list = $nav.find(".list");
   const $search = $(".search");
+  const $items = $nav.find(".item");
+
+  // Store the original ordering of the items
+  const originalOrder = $items.toArray();
 
   // Search input
   $("#search").on("keyup", function(e) {
@@ -55,6 +59,8 @@ $(function() {
     });
 
     const value = this.value.trim();
+    const valueLowerCase = value.toLowerCase();
+
     if (value) {
       const regexp = new RegExp(value, "i");
       $nav.addClass("searching")
@@ -77,18 +83,34 @@ $(function() {
             $title.addClass("highlight");
             highlight($title, value);
             // Highlight the nested member elements for the nested sub-groups
-            $item.children(".parent.match > a").each(function(i, v) {
+            $item.children(".match > a").each(function(i, v) {
               $(v).addClass("highlight");
               highlight($(v), value);
             });
           }
         }
       });
+
+      // Order the list items
+      $items.sort(function(a, b) {
+        const aText = $(a).text().toLowerCase();
+        const bText = $(b).text().toLowerCase();
+        const aIndex = aText.indexOf(valueLowerCase);
+        const bIndex = bText.indexOf(valueLowerCase);
+
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+      });
+      $(".list").append($items);
     } else {
       $nav.removeClass("searching")
         .addClass("not-searching")
         .find(".item, .itemMembers")
         .removeClass("match");
+
+      // Restore original items ordering
+      $(".list").empty().append(originalOrder);
     }
     $list.scrollTop(0);
   });
