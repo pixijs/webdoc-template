@@ -5,7 +5,7 @@ var typeSignature = '';
 
 if (doc.dataType) {
     typeSignature += '<span class="type-signature type">';
-    typeSignature += this.linkTo(doc.dataType);
+    typeSignature += this.linkToDataType(doc.dataType);
     typeSignature += '</span>';
 } else if (doc.type !== "EventDoc" && doc.signature) {
   typeSignature = doc.signature
