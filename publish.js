@@ -54,16 +54,18 @@ TemplateRenderer.prototype.generateRandomID = () => `${randomDice++}`;
 const {Log, LogLevel, tag} = require("missionlog");
 
 const linkto = (...args) => linker.linkTo(...args);
+const removeParentalPrefix = (symbolPath) => symbolPath.replace(/.*[.#](.*)$/, "$1");
 const linkToDataType = (dataType) => {
   const out = linker.linkTo(dataType);
   // Remove the parental prefixes from the label within the <a> tag (eg. 'scene.', 'Container#', etc.)
   return out.replace(/<a href="([^"]+)">[^<]*(\.|#)([^.<#]+)<\/a>/g, "<a href=\"$1\">$3</a>");
 };
 const linkToSymbolPath = (symbolPath, path = symbolPath) => {
-  const extracted = path.replace(/.*[.#](.*)$/, "$1");
+  const extracted = removeParentalPrefix(path);
   // Remove the parental prefixes from the link text (eg. 'scene.', 'Container#', etc.).
   return linker.linkTo(symbolPath, extracted);
 };
+TemplateRenderer.prototype.removeParentalPrefix = removeParentalPrefix;
 TemplateRenderer.prototype.linkToDataType = linkToDataType;
 TemplateRenderer.prototype.linkToSymbolPath = linkToSymbolPath;
 
