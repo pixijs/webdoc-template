@@ -2,7 +2,7 @@
 
 <div class="nameContainer">
     <h4 class="name" id="<?js= enumDoc.name ?>">
-        <?js= enumDoc.attribs + enumDoc.path + (enumDoc.signature ? enumDoc.signature : '') ?>
+        <?js= enumDoc.attribs + (enumDoc.path).replace(/.*[.#](.*)$/, "$1") + (enumDoc.signature ? enumDoc.signature : '') ?>
     </h4>
 </div>
 

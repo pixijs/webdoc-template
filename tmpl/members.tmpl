@@ -15,7 +15,7 @@ if (doc.dataType) {
     <div class="nameContainer">
         <h4 class="name" id="<?js= doc.name ?>">
             <a class="share-icon" href="#<?js= doc.name ?>"><span class="glyphicon glyphicon-link"></span></a>
-            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= (doc.scope === "static" ? doc.path : doc.name) ?></span>
+            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= (doc.scope === "static" ? doc.path : doc.name).replace(/.*[.#](.*)$/, "$1") ?></span>
             <?js= typeSignature ?>
             <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js
