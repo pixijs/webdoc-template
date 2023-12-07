@@ -54,21 +54,92 @@ TemplateRenderer.prototype.generateRandomID = () => `${randomDice++}`;
 const {Log, LogLevel, tag} = require("missionlog");
 
 const linkto = (...args) => linker.linkTo(...args);
+const removeParentalPrefix = (symbolPath) => symbolPath.replace(/.*[.#](.*)$/, "$1");
 const linkToDataType = (dataType) => {
   const out = linker.linkTo(dataType);
-  // Remove the parent from the label within the <a> tag (eg. 'scene.') and also replacing '#' with '.', if applicable.
-  if (out.includes("#")) {
-    return out.replace(/(<a href="[^"]+">)[^<]*?(\w+\.)?(\w+)#(\w+)(.*?<\/a>)/, "$1$3.$4$5");
-  }
-  return out.replace(/(<a href="[^"]+">)[^<]*?(\w+\.)?(.*?<\/a>)/, "$1$3");
+  // Remove the parental prefixes from the label within the <a> tag (eg. 'scene.', 'Container#', etc.)
+  return out.replace(/<a href="([^"]+)">[^<]*(\.|#)([^.<#]+)<\/a>/g, "<a href=\"$1\">$3</a>");
 };
 const linkToSymbolPath = (symbolPath, path = symbolPath) => {
-  const extracted = path.split(".").pop();
-  // Remove the parent from the link text (eg. 'scene.').
+  const extracted = removeParentalPrefix(path);
+  // Remove the parental prefixes from the link text (eg. 'scene.', 'Container#', etc.).
   return linker.linkTo(symbolPath, extracted);
 };
+TemplateRenderer.prototype.removeParentalPrefix = removeParentalPrefix;
 TemplateRenderer.prototype.linkToDataType = linkToDataType;
 TemplateRenderer.prototype.linkToSymbolPath = linkToSymbolPath;
+
+function isValidUrl(string) {
+  try {
+    new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return true;
+}
+
+function matchTextPrefix(content, tagStart) {
+  const index = tagStart - 1;
+
+  if (content.charAt(index) !== "]") {
+    return;
+  }
+
+  let bracketDepth = 1;
+  let openIndex = -1;
+
+  for (let i = index - 1; i >= 0; i--) {
+    const char = content.charAt(i);
+
+    if (char === "[") {
+      --bracketDepth;
+
+      if (bracketDepth === 0) {
+        openIndex = i;
+        break;
+      }
+    } else if (char === "]") {
+      ++bracketDepth;
+    }
+  }
+
+  if (openIndex === -1) {
+    return;
+  }
+
+  const result = [content.slice(openIndex, index + 1)];
+  result.index = openIndex;
+  return result;
+}
+
+// Overriding the default runLinkTag to use renderer.linkToSymbolPath instead of renderer.linkTo function.
+// This is in order to automatically remove all the parental prefixes from any {@link} tag on the docs.
+TemplateTagsResolver.prototype.runLinkTag = function(input) {
+  const linkPattern = /{@link ([^|\s}]*)([\s|])?([^}]*)}/g;
+  let linkMatch = linkPattern.exec(input);
+
+  while (linkMatch) {
+    const linkTextMatch = matchTextPrefix(input, linkMatch.index);
+    const link = linkMatch[1];
+    const linkName = linkMatch[3];
+    const linkText = linkTextMatch ? linkTextMatch[0].slice(1, -1) : linkName || link;
+    let replaced;
+
+    if (isValidUrl(link)) {
+      replaced = `<a ${this.linkClass ? "class=\"" + this.linkClass + "\"" : ""}` + `href="${link}">${linkText}</a>`;
+    } else {
+      replaced = this.renderer.linkToSymbolPath(link, linkText);
+    }
+
+    const startIndex = linkTextMatch ? linkTextMatch.index : linkMatch.index;
+    const endIndex = linkMatch.index + linkMatch[0].length;
+    input = input.slice(0, startIndex) + replaced + input.slice(endIndex);
+    linkMatch = linkPattern.exec(input);
+  }
+
+  return input;
+};
 
 const klawSync = require("klaw-sync");
 

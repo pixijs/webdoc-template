@@ -8,13 +8,10 @@ const kind = doc.type;
         <h4 class="name" id="<?js= doc.name ?>">
             <a class="share-icon" href="#<?js= doc.name ?>"><span class="glyphicon glyphicon-link"></span></a>
             <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>">
-              <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") {
-                const extracted = doc.parent.path.split(".").pop(); ?>
-                  <?js= "new " + extracted ?>
-              <?js } else {
-                  const label = doc.scope === "static" && doc.type === "MethodDoc" ? doc.path : doc.name;
-                  const extracted = label.split(".").pop(); ?>
-                  <?js=extracted?>
+              <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") { ?>
+                  <?js= "new " + this.removeParentalPrefix(doc.parent.path) ?>
+              <?js } else { ?>
+                  <?js=this.removeParentalPrefix(doc.scope === "static" && doc.type === "MethodDoc" ? doc.path : doc.name)?>
               <?js } ?>
             </span>
             <?js= (doc.type !== 'EventDoc' ? doc.signature : '') ?>
