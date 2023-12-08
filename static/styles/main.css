@@ -300,12 +300,13 @@ li {
 	position: absolute;
 	color: white;
 	background-color: #e91e63;
-	width: 25px;
-	height: 25px;
+	width: 18px;
+	height: 18px;
 	border-radius: 5px;
-	top: 0;
-	left: -35px;
+	top: 2px;
+	left: -25px;
 	text-align: center;
+	font-size: small;
 }
 
 .main header ol > li::before {
@@ -315,18 +316,18 @@ li {
 
 .main header ul > li::before {
 	content: '';
-	width: 10px;
-	height: 10px;
+	width: 8px;
+	height: 8px;
 	border-radius: 100%;
-	top: 7px;
-	left: -28px;
+	top: 8px;
+	left: -17px;
 }
 
 .main header ul li ul li::before,
 .main header ol li ul li::before {
-	top: 9px;
-	width: 7px;
-	height: 7px;
+	top: 10px;
+	width: 5px;
+	height: 5px;
 	border-radius: 0%;
 }
 
