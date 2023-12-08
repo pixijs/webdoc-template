@@ -359,10 +359,6 @@ li {
 	margin-top: 25px;
 }
 
-.main header details .hljs {
-	background-color: #f5f5f5;
-}
-
 .main header details > summary::before{
 	content: '▶';
     display: inline-block;
