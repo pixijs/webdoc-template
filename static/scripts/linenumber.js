@@ -23,3 +23,30 @@
     }
   }
 })();
+
+(() => {
+  let e = 0;
+  let a;
+  let t = document.getElementById("source-code");
+
+  if (t) {
+    const n = config.linenums;
+
+    if (n) {
+      t = t.getElementsByTagName("ol")[0];
+      a = Array.prototype.slice.apply(t.children);
+      a = a.map(function (a) {
+        e++;
+        a.id = "line" + e;
+      });
+    } else {
+      t = t.getElementsByTagName("code")[0];
+      a = t.innerHTML.split("\n");
+      a = a.map(function (a) {
+        e++;
+        return '<span id="line' + e + '"></span>' + a;
+      });
+      t.innerHTML = a.join("\n");
+    }
+  }
+})();

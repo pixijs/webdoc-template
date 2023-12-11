@@ -4,13 +4,15 @@
   margin-bottom: 8px;
 }
 
-.collapsible-group-header > * {
-  display: inline;
-  vertical-align: bottom;
-}
+.collapsible-group-header {
+  & > * {
+    display: inline;
+    vertical-align: bottom;
+  }
 
-.collapsible-group-header > a {
-  vertical-align: bottom;
+  & > a {
+    vertical-align: bottom;
+  }
 }
 
 .collapsible-group-body {
