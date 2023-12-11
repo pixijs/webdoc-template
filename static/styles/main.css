@@ -280,6 +280,95 @@ li {
 	font-size: 120%
 }
 
+.main header ol, .main header ul {
+	counter-reset: list-counter;
+	font-size: 100%;
+	display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+.main header ol > li, .main header ul > li {
+	position: relative;
+	margin: 15px 0;
+}
+
+.main header ol > li::before, .main header ul > li::before {
+	position: absolute;
+	color: white;
+	background-color: #e91e63;
+	width: 18px;
+	height: 18px;
+	border-radius: 5px;
+	top: 2px;
+	left: -25px;
+	text-align: center;
+	font-size: small;
+}
+
+.main header ol > li::before {
+	content: counter(list-counter);
+    counter-increment: list-counter;
+}
+
+.main header ul > li::before {
+	content: '';
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	top: 8px;
+	left: -17px;
+}
+
+.main header ul li ul li::before,
+.main header ol li ul li::before {
+	top: 10px;
+	width: 5px;
+	height: 5px;
+	border-radius: 0%;
+}
+
+.main header ul li ol li::before,
+.main header ol li ol li::before {
+	content: counter(list-counter) ")";
+	color: #e91e63;
+	background-color: unset;
+}
+
+.main header details {
+	outline: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 15px 0;
+    padding: 20px 25px;
+}
+
+.main header h3, .main header h4 {
+	font-weight: 700;
+}
+
+.main header details > summary {
+	font-size: 19px;
+	font-weight: 700;
+	color: #e91e63;
+}
+
+.main header details > summary + * {
+	margin-top: 25px;
+}
+
+.main header details > summary::before{
+	content: '▶';
+    display: inline-block;
+    padding-right: 10px;
+}
+
+.main header details[open] > summary::before {
+    content: '▼';
+}
+
 .main header .header {
 	padding: 20px
 }
