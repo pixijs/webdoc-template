@@ -160,4 +160,13 @@ $(function() {
       document.getElementsByTagName("BODY")[0].appendChild(s);
     });
   }
+
+  // Manually scroll to hash, in case it was attempted before the content was loaded.
+  if (window.location.hash) {
+    const hash = window.location.hash;
+    const el = document.querySelector(hash);
+    if (el) {
+      el.scrollIntoView();
+    }
+  }
 });

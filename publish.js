@@ -55,10 +55,50 @@ const {Log, LogLevel, tag} = require("missionlog");
 
 const linkto = (...args) => linker.linkTo(...args);
 const removeParentalPrefix = (symbolPath) => symbolPath.replace(/.*[.#](.*)$/, "$1");
+const formatObjectNotation = (object, indentSize = 3) => {
+  // break apart into lines separating properties (and nested)
+  let lines = object.slice(1, -1).trim()
+    .split(",").join(",\n")
+    .split("{").join("{\n")
+    .split("}").join("\n}")
+    .split("\n");
+
+  // add first and last bracket
+  lines.splice(0, 0, "{");
+  lines.push("}");
+
+  // format with indentation
+  let indentation = 0;
+  lines = lines.map((line, i) => {
+    if (line.indexOf("{") > -1) {
+      indentation += 1;
+    }
+    if (line[0] === "}") {
+      indentation -= 1;
+    }
+    return i === 0 ?
+      line :
+      "&nbsp;".repeat(indentation * indentSize) + line.trim().replace(/\s+:/g, ":");
+  });
+
+  return lines.join("<br/>");
+};
+const formatPropertyType = (property) => {
+  if (property[0] === "{" && property[property.length - 1] === "}") {
+    property = formatObjectNotation(property);
+  }
+  return property.replace(/\b(\w+\??)(?=\s*:)/g, "<span class=\"hljs-attr\">$1</span>");
+};
 const linkToDataType = (dataType) => {
-  const out = linker.linkTo(dataType);
+  const link = linker.linkTo(dataType);
   // Remove the parental prefixes from the label within the <a> tag (eg. 'scene.', 'Container#', etc.)
-  return out.replace(/<a href="([^"]+)">[^<]*(\.|#)([^.<#]+)<\/a>/g, "<a href=\"$1\">$3</a>");
+  const out = link.replace(/<a href="([^"]+)">[^<]*(\.|#)([^.<#]+)<\/a>/g, "<a href=\"$1\">$3</a>");
+
+  if (Array.isArray(dataType)) {
+    return formatPropertyType(out);
+  }
+
+  return out;
 };
 const linkToSymbolPath = (symbolPath, path = symbolPath) => {
   const extracted = removeParentalPrefix(path);
