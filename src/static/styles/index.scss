@@ -1,5 +1,55 @@
+body,
+html {
+  font-family: "Libre Franklin", sans-serif;
+  background-color: #ecedf1;
+  color: #333;
+}
+
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+}
+
+#wrap {
+  position: relative;
+}
+
+.list::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background-color: #647086;
+  border-radius: 4px;
+}
+
+.content-size {
+  max-width: 1000px;
+  min-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.status-deprecated {
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+.status-deprecated a,
+.status-deprecated:hover {
+  text-decoration: none;
+}
+
 @import "./jsdoc-default.scss";
 @import "./prettify-tomorrow.scss";
+@import "./navigation.scss";
 @import "./main.scss";
+@import "./footer.scss";
 @import "./collapsible-group.scss";
 @import "./prettify-property-types.scss";
