@@ -1,6 +1,8 @@
 // @flow
 // This API comes from [jsdoc/lib/]jsdoc/util/templateHelper.js
 
+import { overrideLinkerPlugin } from "./overrides";
+
 const { LinkerPlugin } = require("@webdoc/template-library");
 const {
   traverse,
@@ -9,6 +11,8 @@ const {
   isTypedef,
   isProperty,
 } = require("@webdoc/model");
+
+overrideLinkerPlugin();
 const linker = new LinkerPlugin();
 
 linker.fileLayout = "linear";
@@ -97,11 +101,6 @@ export function getMembers(documentTree: any) {
   return members;
 }
 
-export function toHtmlSafeString(str: string | Buffer) {
-  if (typeof str !== "string") str = String(str);
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-}
-
 type Attribute =
   | "abstract"
   | "async"
@@ -165,82 +164,11 @@ export function toAttributes(doc: any /*: Doc */) {
   return attribs;
 }
 
-export function toAttributeString(attribs: Attribute[]) {
-  if (!attribs.length) return "";
-  return toHtmlSafeString(`(${attribs.join(", ")}) `);
-}
+// export function toAttributeString(attribs: Attribute[]) {
+//   if (!attribs.length) return "";
+//   return toHtmlSafeString(`(${attribs.join(", ")}) `);
+// }
 
 export function linkTo(...args: any) {
   return linker.linkTo(...args);
-}
-
-export function linkToDataType(dataType: any) {
-  const link = linker.linkTo(dataType);
-
-  // Remove the parental prefixes from the label within the <a> tag (eg. 'scene.', 'Container#', etc.)
-  const out = link.replace(
-    /<a href="([^"]+)">[^<]*(\.|#)([^.<#]+)<\/a>/g,
-    '<a href="$1">$3</a>'
-  );
-
-  if (Array.isArray(dataType)) {
-    return formatPropertyType(out);
-  }
-
-  return out;
-}
-
-export function removeParentalPrefix(symbolPath: string) {
-  return symbolPath.replace(/.*[.#](.*)$/, "$1");
-}
-
-export function linkToSymbolPath(symbolPath: string, path = symbolPath) {
-  const extracted = removeParentalPrefix(path);
-  // Remove the parental prefixes from the link text (eg. 'scene.', 'Container#', etc.).
-  return linker.linkTo(symbolPath, extracted);
-}
-
-function formatObjectNotation(object: string, indentSize = 3) {
-  // break apart into lines separating properties (and nested)
-  let lines = object
-    .slice(1, -1)
-    .trim()
-    .split(",")
-    .join(",\n")
-    .split("{")
-    .join("{\n")
-    .split("}")
-    .join("\n}")
-    .split("\n");
-
-  // add first and last bracket
-  lines.splice(0, 0, "{");
-  lines.push("}");
-
-  // format with indentation
-  let indentation = 0;
-  lines = lines.map((line, i) => {
-    if (line.indexOf("{") > -1) {
-      indentation += 1;
-    }
-    if (line[0] === "}") {
-      indentation -= 1;
-    }
-    return i === 0
-      ? line
-      : "&nbsp;".repeat(indentation * indentSize) +
-          line.trim().replace(/\s+:/g, ":");
-  });
-
-  return lines.join("<br/>");
-}
-
-function formatPropertyType(property: string) {
-  if (property[0] === "{" && property[property.length - 1] === "}") {
-    property = formatObjectNotation(property);
-  }
-  return property.replace(
-    /\b(\w+\??)(?=\s*:)/g,
-    '<span class="hljs-attr">$1</span>'
-  );
 }

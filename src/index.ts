@@ -10,18 +10,10 @@ import {
 } from "path";
 import { mkdirSync, readFileSync, copyFileSync } from "fs";
 import { outputFile } from "fs-extra";
-import {
-  linker,
-  toAttributes,
-  getMembers,
-  toHtmlSafeString,
-} from "./utils/helper";
+import { linker, toAttributes, getMembers } from "./utils/helper";
 import { performance } from "perf_hooks";
 import { promises as fsp } from "fs";
-import {
-  overrideTemplateRenderer,
-  overrideTemplateTagsResolver,
-} from "./utils/overrides";
+import { overrideTemplateRenderer, toHtmlSafeString } from "./utils/overrides";
 import { buildNavigation } from "./utils/navigation";
 import {
   FONT_NAMES,
@@ -52,7 +44,6 @@ const klawSync = require("klaw-sync");
 const publishLog = initLogger();
 
 overrideTemplateRenderer();
-overrideTemplateTagsResolver();
 
 function lsSync(dir: string, opts: any = {}): string[] {
   const depth = has(opts, "depth") ? opts.depth : -1;

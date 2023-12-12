@@ -9,9 +9,9 @@ const kind = doc.type;
             <a class="share-icon" href="#<?js= doc.name ?>"><span class="glyphicon glyphicon-link"></span></a>
             <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>">
               <?js if (doc.name === "constructor" && doc.parent && doc.parent.type === "ClassDoc") { ?>
-                  <?js= "new " + this.removeParentalPrefix(doc.parent.path) ?>
+                  <?js= "new " + doc.parent.name ?>
               <?js } else { ?>
-                  <?js=this.removeParentalPrefix(doc.scope === "static" && doc.type === "MethodDoc" ? doc.path : doc.name)?>
+                  <?js=doc.scope === "static" && doc.type === "MethodDoc" ? this.removeParentalPrefix(doc.path) : doc.name?>
               <?js } ?>
             </span>
             <?js= (doc.type !== 'EventDoc' ? doc.signature : '') ?>
@@ -53,7 +53,7 @@ const kind = doc.type;
         <h5>Type:</h5>
         <ul>
             <li>
-                <?js= this.linkToDataType(doc.dataType) ?>
+                <?js= this.linkTo(doc.dataType) ?>
             </li>
         </ul>
     <?js } ?>
