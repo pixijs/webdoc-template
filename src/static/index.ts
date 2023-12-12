@@ -32,6 +32,35 @@ function highlight(anchor: JQuery<HTMLAnchorElement>, textToHighlight: string) {
 $(() => {
   const $nav = $(".navigation");
   const $list = $nav.find(".list");
+
+  // Show an item related a current documentation automatically
+  $nav.addClass("not-searching");
+  const filename = $(".page-title")
+    .data("filename")
+    .replace(/\.[a-z]+$/, "");
+
+  // Directly matching the filename and the top-level item's data-name attribute.
+  let $currentItem = $nav.find('.item[data-name="' + filename + '"]:eq(0)');
+
+  // Fallback to default querying for the likes of interfaces which doesn't have its own top-level navigation item.
+  if (!$currentItem.length) {
+    $currentItem = $nav
+      .find('a[href*="' + filename + '"]:eq(0)')
+      .closest(".item");
+  }
+
+  if ($currentItem.length) {
+    // if a child then show the top level parent and highlight the
+    // current item.
+    if ($currentItem.parents(".children").length) {
+      $currentItem.addClass("current");
+      // need to make all children not current
+      $currentItem.find("li.item").addClass("notCurrent");
+      $currentItem = $currentItem.parents("ul.list>li.item");
+    }
+    $currentItem.remove().prependTo($list).addClass("current");
+  }
+
   const $search = $(".search");
   const $items = $nav.find(".item");
 
@@ -117,34 +146,6 @@ $(() => {
     $list.toggleClass("show");
     $search.toggleClass("show");
   });
-
-  // Show an item related a current documentation automatically
-  $nav.addClass("not-searching");
-  const filename = $(".page-title")
-    .data("filename")
-    .replace(/\.[a-z]+$/, "");
-
-  // Directly matching the filename and the top-level item's data-name attribute.
-  let $currentItem = $nav.find('.item[data-name="' + filename + '"]:eq(0)');
-
-  // Fallback to default querying for the likes of interfaces which doesn't have its own top-level navigation item.
-  if (!$currentItem.length) {
-    $currentItem = $nav
-      .find('a[href*="' + filename + '"]:eq(0)')
-      .closest(".item");
-  }
-
-  if ($currentItem.length) {
-    // if a child then show the top level parent and highlight the
-    // current item.
-    if ($currentItem.parents(".children").length) {
-      $currentItem.addClass("current");
-      // need to make all children not current
-      $currentItem.find("li.item").addClass("notCurrent");
-      $currentItem = $currentItem.parents("ul.list>li.item");
-    }
-    $currentItem.remove().prependTo($list).addClass("current");
-  }
 
   // disqus code
   if (config.disqus) {
