@@ -142,8 +142,12 @@
     margin-left: 6px;
 
     &.deprecated {
-      background-color: #e91e63;
+      display: block;
+      background-color: #ee99b6;
       font-weight: 700;
+      margin-left: 0;
+      margin-top: 5px;
+      padding: 6px;
 
       .deprecated-info {
         font-weight: 400;
