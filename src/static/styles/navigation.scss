@@ -162,10 +162,6 @@
     .item.match {
       display: block;
 
-      &.namespaceItem {
-        display: none;
-      }
-
       .itemMembers.match,
       .itemMembers li.match {
         display: block;
