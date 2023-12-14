@@ -20,11 +20,25 @@
 
   article {
     padding: 20px;
+    padding-top: 10px;
+
+    ol,
+    ul {
+      margin-left: 25px;
+    }
+
+    ol > li {
+      list-style-type: decimal;
+      margin-bottom: 5px;
+    }
+
+    ul > li {
+      margin-bottom: 5px;
+      list-style-type: disc;
+    }
   }
 
   header {
-    background: #fff;
-
     h3,
     h4 {
       font-weight: 700;
@@ -32,21 +46,25 @@
 
     .header {
       padding: 20px;
+      padding-bottom: 0;
 
       h2 {
-        text-transform: capitalize;
         font-weight: 700;
+        border-bottom: 1px solid #c8c9cc;
+        padding-bottom: 10px;
+        text-transform: capitalize;
       }
     }
 
     .class-description {
-      font-size: 120%;
+      padding-top: 10px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #c8c9cc;
     }
 
     ol,
     ul {
       counter-reset: list-counter;
-      font-size: 100%;
       display: block;
       margin-block-start: 1em;
       margin-block-end: 1em;
@@ -101,7 +119,10 @@
     }
 
     details {
-      outline: 1px solid #ddd;
+      background-color: #fdfdfd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Add the box shadow here
+
+      // outline: 1px solid #ddd;
       border-radius: 5px;
       margin: 15px 0;
       padding: 20px 25px;
@@ -159,8 +180,12 @@
     margin-left: 6px;
 
     &.deprecated {
-      background-color: #e91e63;
+      display: block;
+      background-color: #ee99b6;
       font-weight: 700;
+      margin-left: 0;
+      margin-top: 5px;
+      padding: 6px;
 
       .deprecated-info {
         font-weight: 400;
@@ -343,23 +368,6 @@
 
     li {
       margin-bottom: 10px;
-    }
-  }
-
-  article {
-    ol,
-    ul {
-      margin-left: 25px;
-    }
-
-    ol > li {
-      list-style-type: decimal;
-      margin-bottom: 5px;
-    }
-
-    ul > li {
-      margin-bottom: 5px;
-      list-style-type: disc;
     }
   }
 

@@ -1,4 +1,4 @@
-import { linkToDataType } from "./helper";
+import { linkTo } from "./helper";
 
 /*::
 type Signature = {
@@ -72,7 +72,7 @@ export const SignatureBuilder = {
     let returnTypes = [];
     let returnTypesString = "";
 
-    returnTypes = returns.map((ret: any) => linkToDataType(ret.dataType));
+    returnTypes = returns.map((ret: any) => linkTo(ret.dataType));
 
     if (returnTypes.length) {
       returnTypesString = ` ${returnTypes.join("|")}`;
@@ -83,7 +83,7 @@ export const SignatureBuilder = {
       `<span class="type-signature">${returnTypesString}</span>`;
   },
   appendType(doc: any /*: Doc */) {
-    const types = doc.dataType ? linkToDataType(doc.dataType) : "";
+    const types = doc.dataType ? linkTo(doc.dataType) : "";
 
     doc.signature = `${
       doc.signature || ""

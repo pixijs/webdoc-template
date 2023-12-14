@@ -85,7 +85,7 @@
             <?js if (hasType) { ?>
                 <td class="type">
                 <?js if (prop.dataType && prop.dataType.length) {?>
-                    <?js= this.linkToDataType(prop.dataType) ?>
+                    <?js= this.linkTo(prop.dataType) ?>
                 <?js } ?>
                 </td>
             <?js } ?>
@@ -109,7 +109,7 @@
             <?js if (hasDefaultValue) { ?>
                 <td class="default">
                 <?js if (typeof prop.defaultValue !== 'undefined') { ?>
-                    <?js= self.toHtmlSafe(prop.defaultValue) ?>
+                    <code><?js= self.toHtmlSafe(prop.defaultValue) ?></code>
                 <?js } ?>
                 </td>
             <?js } ?>
@@ -117,7 +117,7 @@
             <?js if (hasDataValue) { ?>
                 <td class="default">
                 <?js if (typeof prop.dataValue !== 'undefined') { ?>
-                    <?js= self.toHtmlSafe(prop.dataValue) ?>
+                    <code><?js= self.toHtmlSafe(prop.dataValue) ?></code>
                 <?js }?>
                 </td>
             <?js } ?>

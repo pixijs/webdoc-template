@@ -35,6 +35,7 @@ export function initLogger() {
   const defaultLevel = "INFO";
   return new Log().init(
     {
+      TemplateLibrary: "WARN",
       TemplateGenerator: defaultLevel,
       ContentBar: defaultLevel,
       Signature: defaultLevel,
