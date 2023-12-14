@@ -164,11 +164,6 @@ export function toAttributes(doc: any /*: Doc */) {
   return attribs;
 }
 
-// export function toAttributeString(attribs: Attribute[]) {
-//   if (!attribs.length) return "";
-//   return toHtmlSafeString(`(${attribs.join(", ")}) `);
-// }
-
 export function linkTo(...args: any) {
   return linker.linkTo(...args);
 }
