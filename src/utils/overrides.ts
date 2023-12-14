@@ -125,10 +125,10 @@ export function overrideLinkerPlugin() {
 
       for (let i = 1; i < docPath.length; i++) {
         // TODO: Include more syntax highlighting
-        console.log(
-          `docPath${i}:`,
-          typeof docPath[i] === "string" ? docPath[i] : docPath[i].name
-        );
+        // console.log(
+        //   `docPath${i}:`,
+        //   typeof docPath[i] === "string" ? docPath[i] : docPath[i].name
+        // );
 
         link = link.replace(
           `%${i}`,
