@@ -590,3 +590,31 @@ li {
 	color: #79859a;
 	border-top: 1px solid #c8c9cc
 }
+
+.main aside {
+    background: #c0c0d1;
+    font-size: smaller;
+    padding: 3px 5px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: white;
+    border-left: 10px solid #f3e1e7;
+}
+
+.main aside code {
+    color: #d2a4b0;
+    padding: 1px 2px;
+    font-size: smaller;
+}
+
+.main .header ul {
+    padding: 0 20px;
+}
+
+.main .header li {
+    list-style-type: disc;
+}
+
+.main .header h2 {
+    text-transform: capitalize;
+}
