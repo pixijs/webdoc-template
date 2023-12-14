@@ -9,7 +9,7 @@
     "watch": "rollup --configPlugin rollup-plugin-typescript2 -c -w",
     "lint": "eslint *.js",
     "postversion": "git push && git push --tags",
-    "prepack": "clean-package",
+    "prepack": "npm run build && clean-package",
     "postpack": "clean-package restore"
   },
   "repository": {
