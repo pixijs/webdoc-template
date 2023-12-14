@@ -92,7 +92,7 @@
 
             <td class="type">
             <?js if (param.dataType) {?>
-                <?js= self.linkToDataType(param.dataType) ?>
+                <?js= self.linkTo(param.dataType) ?>
             <?js } ?>
             </td>
 
@@ -115,7 +115,7 @@
             <?js if (params.hasDefault) {?>
                 <td class="default">
                     <?js if (typeof param.default !== 'undefined') { ?>
-                        <?js= self.htmlsafe(param.default) ?>
+                        <?js= self.toHtmlSafe(param.default) ?>
                     <?js } ?>
                 </td>
             <?js } ?>

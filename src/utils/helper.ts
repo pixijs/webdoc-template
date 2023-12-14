@@ -1,14 +1,22 @@
 // @flow
 // This API comes from [jsdoc/lib/]jsdoc/util/templateHelper.js
 
-const {LinkerPlugin} = require("@webdoc/template-library");
-const {traverse, isMethod, isFunction, isTypedef, isProperty} = require("@webdoc/model");
+import { overrideLinkerPlugin } from "./overrides";
 
+const { LinkerPlugin } = require("@webdoc/template-library");
+const {
+  traverse,
+  isMethod,
+  isFunction,
+  isTypedef,
+  isProperty,
+} = require("@webdoc/model");
+
+overrideLinkerPlugin();
 const linker = new LinkerPlugin();
 
 linker.fileLayout = "linear";
-
-exports.linker = linker;
+export { linker };
 
 /**
  * Retrieve all of the following types of members from a set of doclets:
@@ -24,8 +32,8 @@ exports.linker = linker;
  * @return {object} An object with `classes`, `externals`, `globals`, `mixins`, `modules`,
  * `events`, and `namespaces` properties. Each property contains an array of objects.
  */
-exports.getMembers = (documentTree /*: RootDoc */) => {
-  const members = {
+export function getMembers(documentTree: any) {
+  const members: Record<string, any> = {
     classes: [],
     externals: [],
     events: [],
@@ -37,9 +45,11 @@ exports.getMembers = (documentTree /*: RootDoc */) => {
     tutorials: [],
   };
 
-  traverse(documentTree, (doc) => {
-    if (doc.parent === documentTree &&
-        (isMethod(doc) || isFunction(doc) || isProperty(doc) || isTypedef(doc))) {
+  traverse(documentTree, (doc: any) => {
+    if (
+      doc.parent === documentTree &&
+      (isMethod(doc) || isFunction(doc) || isProperty(doc) || isTypedef(doc))
+    ) {
       // members.globals.push(doc);
       return;
     }
@@ -48,38 +58,38 @@ exports.getMembers = (documentTree /*: RootDoc */) => {
     }
 
     switch (doc.type) {
-    case "ClassDoc":
-      members.classes.push(doc);
-      break;
-    case "ExternalDoc":
-      members.externals.push(doc);
-      break;
-    case "EventDoc":
-      members.events.push(doc);
-      break;
-    case "ModuleDoc":
-      members.modules.push(doc);
-      break;
-    case "NSDoc":
-      members.namespaces.push(doc);
-      break;
-    case "InterfaceDoc":
-      members.interfaces.push(doc);
-      break;
-    case "TutorialDoc":
-      members.tutorials.push(doc);
-      break;
+      case "ClassDoc":
+        members.classes.push(doc);
+        break;
+      case "ExternalDoc":
+        members.externals.push(doc);
+        break;
+      case "EventDoc":
+        members.events.push(doc);
+        break;
+      case "ModuleDoc":
+        members.modules.push(doc);
+        break;
+      case "NSDoc":
+        members.namespaces.push(doc);
+        break;
+      case "InterfaceDoc":
+        members.interfaces.push(doc);
+        break;
+      case "TutorialDoc":
+        members.tutorials.push(doc);
+        break;
     }
   });
 
-  members.namespaces.sort((m1, m2) => m1.path.localeCompare(m2.path));
-  members.classes.sort((m1, m2) => m1.path.localeCompare(m2.path));
+  members.namespaces.sort((m1: any, m2: any) => m1.path.localeCompare(m2.path));
+  members.classes.sort((m1: any, m2: any) => m1.path.localeCompare(m2.path));
 
   // strip quotes from externals, since we allow quoted names that would normally indicate a
   // namespace hierarchy (as in `@external "jquery.fn"`)
   // TODO: we should probably be doing this for other types of symbols, here or elsewhere; see
   // jsdoc3/jsdoc#396
-  members.externals = members.externals.map((doclet) => {
+  members.externals = members.externals.map((doclet: any) => {
     doclet.name = doclet.name.replace(/(^"|"$)/g, "");
 
     return doclet;
@@ -89,24 +99,25 @@ exports.getMembers = (documentTree /*: RootDoc */) => {
   // members.globals = members.globals.filter((doclet) => !isModuleExports(doclet));
 
   return members;
-};
+}
 
-const toHtmlSafeString = exports.toHtmlSafeString = (str /*: string */) /*: string */ => {
-  if (typeof str !== "string") {
-    str = String(str);
-  }
+type Attribute =
+  | "abstract"
+  | "async"
+  | "generator"
+  | "abstract"
+  | "virtual"
+  | "private"
+  | "protected"
+  | "static"
+  | "inner"
+  | "readonly"
+  | "constant"
+  | "nullable"
+  | "non-null";
 
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-};
-
-/*::
-type Attribute = "abstract" | "async" | "generator" | "abstract" | "virtual" | "private" | "protected" |
-  "static" | "inner" | "readonly" | "constant" | "nullable" | "non-null"
-*/
-
-// This is not a constructor
-exports.Attributes = (doc /*: Doc */) => /*: Attribute[] */ {
-  const attribs /*: Attribute[] */ = [];
+export function toAttributes(doc: any /*: Doc */) {
+  const attribs: Attribute[] = [];
 
   if (!doc) {
     return attribs;
@@ -151,14 +162,8 @@ exports.Attributes = (doc /*: Doc */) => /*: Attribute[] */ {
   }
 
   return attribs;
-};
+}
 
-exports.toAttributeString = (attribs /*: Attribute */) /*: string */ => {
-  const attribsString = "";
-
-  if (attribs && attribs.length) {
-    toHtmlSafeString(`(${attribs.join(", ")}) `);
-  }
-
-  return attribsString;
-};
+export function linkTo(...args: any) {
+  return linker.linkTo(...args);
+}

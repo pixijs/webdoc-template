@@ -21,7 +21,7 @@
           }
     ?>
         <?js= this.partial('sublayouts/collapsible-group.tmpl', {
-          title: "From class " + this.linkToSymbolPath(parentClass, parentClass.path),
+          title: "From class " + this.linkTo(parentClass, parentClass.name),
           group: inheritedEvents,
           template: 'method.tmpl'
         }) ?>

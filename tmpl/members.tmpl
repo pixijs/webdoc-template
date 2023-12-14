@@ -5,7 +5,7 @@ var typeSignature = '';
 
 if (doc.dataType) {
     typeSignature += '<span class="type-signature type">';
-    typeSignature += this.linkToDataType(doc.dataType);
+    typeSignature += this.linkTo(doc.dataType);
     typeSignature += '</span>';
 } else if (doc.type !== "EventDoc" && doc.signature) {
   typeSignature = doc.signature
@@ -15,7 +15,7 @@ if (doc.dataType) {
     <div class="nameContainer">
         <h4 class="name" id="<?js= doc.name ?>">
             <a class="share-icon" href="#<?js= doc.name ?>"><span class="glyphicon glyphicon-link"></span></a>
-            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= this.removeParentalPrefix(doc.scope === "static" ? doc.path : doc.name) ?></span>
+            <span class="<?js= doc.deprecated ? 'status-deprecated' : '' ?>"><?js= doc.scope === "static" ? this.removeParentalPrefix(doc.path) : doc.name ?></span>
             <?js= typeSignature ?>
             <?js if (doc.deprecated) { ?>
                 <span class="access-signature deprecated">Deprecated<?js

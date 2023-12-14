@@ -75,10 +75,8 @@
         <h3 class="subsection-title">Extends</h3>
 
         <ul>
-          <?js doc.extends.forEach(function(doc) {
-              const symbolPath = typeof doc === "string"? doc : doc.path; ?>
-
-            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
+          <?js doc.extends.forEach(function(doc) { ?>
+            <li><?js= self.linkTo(typeof doc === "string"? doc : doc.path, doc.name) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>
@@ -87,10 +85,8 @@
         <h3 class="subsection-title">Implements</h3>
 
         <ul>
-          <?js doc.implements.forEach(function(doc) {
-              const symbolPath = typeof doc === "string" ? doc : doc.path; ?>
-
-            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
+          <?js doc.implements.forEach(function(doc) { ?>
+            <li><?js= self.linkTo(typeof doc === "string" ? doc : doc.path, doc.name) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>
@@ -99,10 +95,8 @@
         <h3 class="subsection-title">Mixes In</h3>
 
         <ul>
-          <?js doc.mixes.forEach(function(doc) {
-            const symbolPath = typeof doc === "string" ? doc : doc.path; ?>
-
-            <li><?js= self.linkToSymbolPath(symbolPath) ?></li>
+          <?js doc.mixes.forEach(function(doc) { ?>
+            <li><?js= self.linkTo(typeof doc === "string" ? doc : doc.path, doc.name) ?></li>
           <?js }); ?>
         </ul>
     <?js } ?>

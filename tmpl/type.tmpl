@@ -3,6 +3,6 @@
     var self = this;
 
     data.slice(1).forEach(function(name, i) { ?>
-        <span class="param-type"><?js= self.linkto(name, self.htmlsafe(name)) ?></span>
+        <span class="param-type"><?js= self.linkto(name, self.toHtmlSafe(name)) ?></span>
         <?js if (i < data.length - 2) { ?>|<?js } ?>
 <?js }); ?>

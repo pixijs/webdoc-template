@@ -1,0 +1,42 @@
+.params .type,
+.properties .default {
+  font-family: monospace !important;
+  font-size: 12px !important;
+  color: #6e6eb5 !important;
+}
+
+.properties .type a:hover,
+.params .type a:hover {
+  text-decoration: underline !important;
+}
+
+.properties .default {
+  color: #96b59d !important;
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-variable.constant_,
+.hljs-property {
+  color: #6e6eb5 !important;
+}
+
+.hljs-title.class_ {
+  color: #4444b9 !important;
+}
+
+.hljs-attr {
+  color: red !important;
+}
+
+.hljs-title {
+  font-weight: normal !important;
+}
+
+.share-icon {
+  padding-top: 15px;
+}
+
+.hljs-keyword {
+  color: inherit !important;
+}
