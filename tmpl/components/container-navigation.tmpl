@@ -15,10 +15,12 @@ var canStyleAsNamespace = function(item) {
     <ul class="list">
     <?js
     const process = (item) => {
+        const isNamespace = canStyleAsNamespace(item);
+        const isNamespaceItem = item.path.includes(".");
     ?>
-        <li class="item" data-name="<?js= (item.type === 'tutorial' ? 'tutorial-' : '') + item.path ?>">
-            <span class="title <?js if (canStyleAsNamespace(item)) { ?>namespace<?js } ?> <?js if (item.deprecated) { ?>status-deprecated<?js } ?>">
-                <?js if (canStyleAsNamespace(item)) { ?>
+        <li class="item <?js= isNamespaceItem ? 'namespaceItem' : ''?>" data-name="<?js= (item.type === 'tutorial' ? 'tutorial-' : '') + item.path ?>">
+            <span class="title <?js if (isNamespace) { ?>namespace<?js } ?> <?js if (item.deprecated) { ?>status-deprecated<?js } ?>">
+                <?js if (isNamespace) { ?>
                 <span class="namespaceTag">
                     <span class="glyphicon glyphicon-<?js= (item.path === 'global') ? 'globe' : 'folder-open' ?>"></span>
                 </span>

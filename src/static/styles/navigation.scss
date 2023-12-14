@@ -139,13 +139,21 @@
     display: none;
   }
 
-  &.not-searching .item {
-    display: block;
+  &.not-searching {
+    .item {
+      display: block;
 
-    &.current {
-      .itemMembers,
-      .itemMembers li {
+      &.namespaceItem {
+        display: none;
+      }
+
+      &.current {
         display: block;
+
+        .itemMembers,
+        .itemMembers li {
+          display: block;
+        }
       }
     }
   }
