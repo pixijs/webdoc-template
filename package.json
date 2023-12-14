@@ -9,7 +9,8 @@
     "watch": "rollup --configPlugin rollup-plugin-typescript2 -c -w",
     "lint": "eslint *.js",
     "postversion": "git push && git push --tags",
-    "prepack": "npm run build && clean-package",
+    "prepare": "npm run build",
+    "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
   "repository": {
@@ -33,7 +34,6 @@
   "homepage": "https://github.com/pixijs/webdoc-template#readme",
   "files": [
     "publish.js",
-    "helper.js",
     "static",
     "tmpl"
   ],
