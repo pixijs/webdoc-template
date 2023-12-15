@@ -1,4 +1,4 @@
-import { has, cloneDeep } from "lodash";
+import {has} from "lodash";
 import {
   basename,
   join,
@@ -8,20 +8,20 @@ import {
   dirname,
   parse,
 } from "path";
-import { mkdirSync, readFileSync, copyFileSync } from "fs";
-import { outputFile } from "fs-extra";
-import { linker, toAttributes, getMembers } from "./utils/helper";
-import { performance } from "perf_hooks";
-import { promises as fsp } from "fs";
-import { overrideTemplateRenderer, toHtmlSafeString } from "./utils/overrides";
-import { buildNavigation } from "./utils/navigation";
+import {mkdirSync, readFileSync, copyFileSync} from "fs";
+import {outputFile} from "fs-extra";
+import {linker, toAttributes, getMembers} from "./utils/helper";
+import {performance} from "perf_hooks";
+import {promises as fsp} from "fs";
+import {overrideTemplateRenderer, toHtmlSafeString} from "./utils/overrides";
+import {buildNavigation} from "./utils/navigation";
 import {
   FONT_NAMES,
   PRETTIFIER_CSS_FILES,
   PRETTIFIER_SCRIPT_FILES,
 } from "./utils/consts";
-import { initLogger } from "./utils/logs";
-import { SignatureBuilder, needsSignature } from "./utils/signature";
+import {initLogger} from "./utils/logs";
+import {SignatureBuilder, needsSignature} from "./utils/signature";
 
 const {
   TemplateRenderer,
@@ -58,7 +58,7 @@ function lsSync(dir: string, opts: any = {}): string[] {
 }
 
 function mkdirpSync(filepath: string) {
-  return mkdirSync(filepath, { recursive: true });
+  return mkdirSync(filepath, {recursive: true});
 }
 
 /**
@@ -95,13 +95,13 @@ function generateSourceFiles(sourceFiles: any, encoding: any = "utf8") {
       source = {
         type: "sourceFile",
         code: toHtmlSafeString(
-          readFileSync(sourceFiles[file].resolved, encoding)
+          readFileSync(sourceFiles[file].resolved, encoding),
         ),
       };
     } catch (e: any) {
       publishLog.error(
         "SourceFile",
-        `Error while generating source file ${file}: ${e.message}`
+        `Error while generating source file ${file}: ${e.message}`,
       );
     }
 
@@ -125,9 +125,9 @@ function addAttribs(f: any) {
 
   if (attribs.length) {
     f.attribs = "";
-    attribs.forEach(function (a: any) {
+    attribs.forEach(function(a: any) {
       f.attribs +=
-        '<span class="access-signature">' + toHtmlSafeString(a) + "</span>";
+        "<span class=\"access-signature\">" + toHtmlSafeString(a) + "</span>";
     });
   }
 }
@@ -143,14 +143,14 @@ function shortenPaths(files: any, commonPrefix: any) {
   return files;
 }
 
-function getPathFromDoclet({ meta }: any) {
+function getPathFromDoclet({meta}: any) {
   if (!meta) {
     return null;
   }
 
-  return meta.path && meta.path !== "null"
-    ? join(meta.path, meta.filename)
-    : meta.filename;
+  return meta.path && meta.path !== "null" ?
+    join(meta.path, meta.filename) :
+    meta.filename;
 }
 
 /**
@@ -164,33 +164,33 @@ function getPathFromDoclet({ meta }: any) {
  * check.
  * @param {Array.<module:jsdoc/doclet.Doclet>} modules - The array of module doclets to search.
  */
-function attachModuleSymbols(doclets: any, modules: any) {
-  const symbols: any = {};
+// function attachModuleSymbols(doclets: any, modules: any) {
+//   const symbols: any = {};
 
-  // build a lookup table
-  doclets.forEach((symbol: any) => {
-    symbols[symbol.longname] = symbols[symbol.longname] || [];
-    symbols[symbol.longname].push(symbol);
-  });
+//   // build a lookup table
+//   doclets.forEach((symbol: any) => {
+//     symbols[symbol.longname] = symbols[symbol.longname] || [];
+//     symbols[symbol.longname].push(symbol);
+//   });
 
-  modules.forEach((module: any) => {
-    if (symbols[module.longname]) {
-      module.modules = symbols[module.longname]
-        // Only show symbols that have a description. Make an exception for classes, because
-        // we want to show the constructor-signature heading no matter what.
-        .filter(({ description, kind }: any) => description || kind === "class")
-        .map((symbol: any) => {
-          symbol = cloneDeep(symbol);
+//   modules.forEach((module: any) => {
+//     if (symbols[module.longname]) {
+//       module.modules = symbols[module.longname]
+//         // Only show symbols that have a description. Make an exception for classes, because
+//         // we want to show the constructor-signature heading no matter what.
+//         .filter(({description, kind}: any) => description || kind === "class")
+//         .map((symbol: any) => {
+//           symbol = cloneDeep(symbol);
 
-          if (symbol.kind === "class" || symbol.kind === "function") {
-            symbol.name = `${symbol.name.replace("module:", '(require("')}"))`;
-          }
+//           if (symbol.kind === "class" || symbol.kind === "function") {
+//             symbol.name = `${symbol.name.replace("module:", "(require(\"")}"))`;
+//           }
 
-          return symbol;
-        });
-    }
-  });
-}
+//           return symbol;
+//         });
+//     }
+//   });
+// }
 
 function sourceToDestination(parentDir: any, sourcePath: any, destDir: any) {
   const relativeSource = relative(parentDir, sourcePath);
@@ -204,7 +204,6 @@ export function publish(options: any) {
   docDatabase = options.docDatabase;
   const opts = options.opts;
   const manifest = options.manifest;
-  const tutorials = options.tutorials;
   const userConfig = (global as any).Webdoc.userConfig;
   env = options.config;
 
@@ -213,21 +212,13 @@ export function publish(options: any) {
 
   outdir = normalize(env.opts.destination);
 
-  let conf;
-  let cwd;
-  let fromDir: any;
-  let outputSourceFiles;
-  let packageInfo;
   const sourceFilePaths: any = [];
   let sourceFiles: any = {};
-  let staticFileFilter;
-  let staticFilePaths;
   let staticFiles;
-  let staticFileScanner;
 
   data = docDatabase;
 
-  conf = env.conf.templates || {};
+  const conf = env.conf.templates || {};
   conf.default = conf.default || {};
 
   const templatePath = __dirname;
@@ -247,9 +238,9 @@ export function publish(options: any) {
   const globalUrl = linker.createURI("global");
 
   // set up templating
-  view.layout = conf.default.layoutFile
-    ? resolve(conf.default.layoutFile)
-    : "layout.tmpl";
+  view.layout = conf.default.layoutFile ?
+    resolve(conf.default.layoutFile) :
+    "layout.tmpl";
 
   // set up tutorials for helper
   // helper.setTutorials(tutorials);
@@ -294,14 +285,14 @@ export function publish(options: any) {
   });
 
   // update outdir if necessary, then create outdir
-  packageInfo = (find({ kind: "package" }) || [])[0];
+  const packageInfo = (find({kind: "package"}) || [])[0];
   if (packageInfo && packageInfo.name) {
     outdir = join(outdir, packageInfo.name, packageInfo.version || "");
   }
   mkdirpSync(outdir);
 
   // copy the template's static files to outdir
-  fromDir = join(templatePath, "static");
+  const fromDir = join(templatePath, "static");
   staticFiles = lsSync(fromDir);
 
   staticFiles.forEach((fileName: any) => {
@@ -313,7 +304,7 @@ export function publish(options: any) {
 
   // copy the fonts used by the template to outdir
   staticFiles = lsSync(
-    join(require.resolve("open-sans-fonts"), "..", "open-sans")
+    join(require.resolve("open-sans-fonts"), "..", "open-sans"),
   );
 
   staticFiles.forEach((fileName: any) => {
@@ -331,7 +322,7 @@ export function publish(options: any) {
 
     copyFileSync(
       join(require.resolve("code-prettify"), "..", fileName),
-      toPath
+      toPath,
     );
   });
 
@@ -341,9 +332,9 @@ export function publish(options: any) {
 
     copyFileSync(
       require.resolve(
-        "color-themes-for-google-code-prettify/dist/themes/" + fileName
+        "color-themes-for-google-code-prettify/dist/themes/" + fileName,
       ),
-      toPath
+      toPath,
     );
   });
 
@@ -427,7 +418,7 @@ export function publish(options: any) {
   // tutorials.forEach((t: any) => generateTutorialLinks(t));
 
   // output pretty-printed source files by default
-  outputSourceFiles = userConfig.template.outputSourceFiles;
+  const outputSourceFiles = userConfig.template.outputSourceFiles;
   // once for all
   view.nav = buildNavigation(members);
   // attachModuleSymbols( find({longname: {left: "module:"}}), members.modules );
@@ -438,7 +429,7 @@ export function publish(options: any) {
   }
 
   if (members.globals.length) {
-    generate("Global", [{ kind: "globalobj" }], globalUrl);
+    generate("Global", [{kind: "globalobj"}], globalUrl);
   }
 
   generateHomePage(indexUrl, docTree);
@@ -473,7 +464,7 @@ export function publish(options: any) {
   }
 
   console.log(
-    `@pixi/webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`
+    `@pixi/webdoc-template took ${Math.ceil(performance.now() - t0)}ms to run!`,
   );
 
   /*
@@ -511,13 +502,13 @@ export function publish(options: any) {
  */
 async function generateHomePage(
   pagePath: any /*: string */,
-  rootDoc: any /*: RootDoc */
+  rootDoc: any, /*: RootDoc */
 ) /*: void */ {
   const userConfig = (global as any).Webdoc.userConfig;
 
   // index page displays information from package.json and lists files
-  const files = docDatabase({ kind: "file" }).get();
-  const packages = docDatabase({ type: "PackageDoc" }).get();
+  const files = docDatabase({kind: "file"}).get();
+  const packages = docDatabase({type: "PackageDoc"}).get();
 
   const arr = rootDoc.members.filter(
     (doc: any) =>
@@ -525,7 +516,7 @@ async function generateHomePage(
       doc.type === "EnumDoc" ||
       doc.type === "MethodDoc" ||
       doc.type === "PropertyDoc" ||
-      doc.type === "TypedefDoc"
+      doc.type === "TypedefDoc",
   );
 
   const readme = userConfig.template.readme;
@@ -557,7 +548,7 @@ async function generateHomePage(
         },
       ])
       .concat(files),
-    pagePath
+    pagePath,
   );
 }
 

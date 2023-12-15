@@ -1,4 +1,4 @@
-import { each } from "lodash";
+import {each} from "lodash";
 
 class Navigable {
   type: "class" | "global" | "namespace";
@@ -16,7 +16,7 @@ class Navigable {
 
   constructor(
     doc: any /*{ name: string, path: string, deprecated: boolean, members: any[] }*/,
-    type: any /*"class" | "namespace"*/
+    type: any, /*"class" | "namespace"*/
   ) {
     this.type = type;
     this.name = doc.name;
@@ -39,37 +39,37 @@ class Navigable {
       }
 
       switch (child.type) {
-        case "ClassDoc":
-          this.classes.push(child);
-          break;
-        case "NSDoc":
-          break;
-        case "PropertyDoc":
-          this.members.push(child);
-          break;
-        case "MethodDoc":
-        case "FunctionDoc":
-          if (child.name !== "constructor") {
-            this.methods.push(child);
-          }
-          break;
-        case "EventDoc":
-          this.events.push(child);
-          break;
-        case "InterfaceDoc":
-          this.interfaces.push(child);
-          break;
-        case "EnumDoc":
-          this.enums.push(child);
-          break;
-        case "TypedefDoc":
-          this.typedefs.push(child);
-          break;
-        case "TutorialDoc":
-          this.tutorials.push(child);
-          break;
-        default:
-          console.log("Unknown doc-type " + child.type);
+      case "ClassDoc":
+        this.classes.push(child);
+        break;
+      case "NSDoc":
+        break;
+      case "PropertyDoc":
+        this.members.push(child);
+        break;
+      case "MethodDoc":
+      case "FunctionDoc":
+        if (child.name !== "constructor") {
+          this.methods.push(child);
+        }
+        break;
+      case "EventDoc":
+        this.events.push(child);
+        break;
+      case "InterfaceDoc":
+        this.interfaces.push(child);
+        break;
+      case "EnumDoc":
+        this.enums.push(child);
+        break;
+      case "TypedefDoc":
+        this.typedefs.push(child);
+        break;
+      case "TutorialDoc":
+        this.tutorials.push(child);
+        break;
+      default:
+        console.log("Unknown doc-type " + child.type);
       }
     });
   }
@@ -120,7 +120,7 @@ export function buildNavigation(members: any) {
   */
 
   if (members.namespaces.length) {
-    each(members.namespaces, function (nsDoc: any) {
+    each(members.namespaces, function(nsDoc: any) {
       nav.push(new Navigable(nsDoc, "namespace"));
     });
   }
@@ -134,8 +134,8 @@ export function buildNavigation(members: any) {
           path: "globals",
           members: members.globals,
         },
-        "namespace"
-      )
+        "namespace",
+      ),
     );
   }
 

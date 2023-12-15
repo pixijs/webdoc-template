@@ -1,9 +1,9 @@
 // @flow
 // This API comes from [jsdoc/lib/]jsdoc/util/templateHelper.js
 
-import { overrideLinkerPlugin } from "./overrides";
+import {overrideLinkerPlugin} from "./overrides";
 
-const { LinkerPlugin } = require("@webdoc/template-library");
+const {LinkerPlugin} = require("@webdoc/template-library");
 const {
   traverse,
   isMethod,
@@ -16,7 +16,7 @@ overrideLinkerPlugin();
 const linker = new LinkerPlugin();
 
 linker.fileLayout = "linear";
-export { linker };
+export {linker};
 
 /**
  * Retrieve all of the following types of members from a set of doclets:
@@ -58,27 +58,27 @@ export function getMembers(documentTree: any) {
     }
 
     switch (doc.type) {
-      case "ClassDoc":
-        members.classes.push(doc);
-        break;
-      case "ExternalDoc":
-        members.externals.push(doc);
-        break;
-      case "EventDoc":
-        members.events.push(doc);
-        break;
-      case "ModuleDoc":
-        members.modules.push(doc);
-        break;
-      case "NSDoc":
-        members.namespaces.push(doc);
-        break;
-      case "InterfaceDoc":
-        members.interfaces.push(doc);
-        break;
-      case "TutorialDoc":
-        members.tutorials.push(doc);
-        break;
+    case "ClassDoc":
+      members.classes.push(doc);
+      break;
+    case "ExternalDoc":
+      members.externals.push(doc);
+      break;
+    case "EventDoc":
+      members.events.push(doc);
+      break;
+    case "ModuleDoc":
+      members.modules.push(doc);
+      break;
+    case "NSDoc":
+      members.namespaces.push(doc);
+      break;
+    case "InterfaceDoc":
+      members.interfaces.push(doc);
+      break;
+    case "TutorialDoc":
+      members.tutorials.push(doc);
+      break;
     }
   });
 
