@@ -1,18 +1,17 @@
 {
+    "extends": ["@pixi/eslint-config"],
     "env": {
         "commonjs": true,
+        "browser": true,
         "es6": true,
         "mocha": true,
         "node": true
     },
-    "extends": [
-        "eslint:recommended",
-        "google"
-    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
-        "Webdoc": "readonly"
+        "Webdoc": "readonly",
+        "JQuery": "readonly"
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -20,21 +19,18 @@
         "sourceType": "module"
     },
     "rules": {
+        "valid-jsdoc": "off",
         "require-jsdoc": "off",
-        "max-len": [
-            "error",
-            {
-                "code": 100
-            }
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "indent": [
-            "error",
-            2
-        ],
-        "spaced-comment": "off"
+        "no-console": "off",
+        "global-require": "off",
+        "@typescript-eslint/no-var-requires": "off",
+
+        // TODO: investigate 'Definition for rule '@typescript-eslint/no-duplicate-imports' was not found.' issue
+        "@typescript-eslint/no-duplicate-imports": 0,
+
+        "spaced-comment": [1, "always", { "markers": ["/"] }],
+        "@typescript-eslint/triple-slash-reference": [1, { "path": "always" }],
+        "@typescript-eslint/consistent-type-imports": [1, { "disallowTypeAnnotations": false }],
+        "@typescript-eslint/type-annotation-spacing": 1
     }
 }

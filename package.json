@@ -5,9 +5,11 @@
   "type": "commonjs",
   "main": "publish.js",
   "scripts": {
-    "build": "rollup --configPlugin rollup-plugin-typescript2 -c",
-    "watch": "rollup --configPlugin rollup-plugin-typescript2 -c -w",
-    "lint": "eslint *.js",
+    "prebuild": "run-s lint types",
+    "build": "rollup -c",
+    "watch": "rollup -cw",
+    "lint": "eslint src --ext .ts --max-warnings 0",
+    "types": "tsc",
     "postversion": "git push && git push --tags",
     "prepare": "npm run build",
     "prepack": "clean-package",
@@ -43,6 +45,11 @@
     "yarn": "please-use-npm",
     "npm": ">= 6"
   },
+  "lint-staged": {
+    "*.{ts,js,mjs}": [
+      "eslint --cache --fix --max-warnings 0"
+    ]
+  },
   "dependencies": {
     "code-prettify": "^0.1.0",
     "color-themes-for-google-code-prettify": "^2.0.4",
@@ -62,6 +69,7 @@
     "@webdoc/template-library": "^1.2.1"
   },
   "devDependencies": {
+    "@pixi/eslint-config": "^5.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
@@ -69,12 +77,13 @@
     "@types/jquery": "^3.5.29",
     "@types/klaw-sync": "^6.0.5",
     "@types/lodash": "^4.14.202",
+    "@typescript-eslint/parser": "^6.14.0",
     "clean-package": "^1.0.1",
-    "eslint": "^6.8.0",
-    "eslint-config-google": "^0.14.0",
+    "eslint": "^8.0.0",
+    "npm-run-all": "^4.1.5",
     "rollup": "^4.8.0",
+    "rollup-plugin-esbuild": "^6.1.0",
     "rollup-plugin-scss": "^4.0.0",
-    "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.69.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"

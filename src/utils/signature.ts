@@ -1,24 +1,27 @@
-import { linkTo } from "./helper";
+import { linkTo } from './helper';
 
-/*::
+/* ::
 type Signature = {
   params: [Param],
   returns: [Return]
 }
 */
 
-export function needsSignature(doc: any /*: Doc */) {
-  // Functions, methods, and properties always have signatures.
-  if (doc.type === "FunctionDoc" || doc.type === "MethodDoc") {
-    return true;
-  }
-  // Class constructors documented as classes have signatures.
-  if (doc.type === "ClassDoc" && doc.params) {
-    return true;
-  }
+export function needsSignature(doc: any /* : Doc */)
+{
+    // Functions, methods, and properties always have signatures.
+    if (doc.type === 'FunctionDoc' || doc.type === 'MethodDoc')
+    {
+        return true;
+    }
+    // Class constructors documented as classes have signatures.
+    if (doc.type === 'ClassDoc' && doc.params)
+    {
+        return true;
+    }
 
-  // TODO: Need to resolve this one!
-  /*
+    // TODO: Need to resolve this one!
+    /*
     // Typedefs containing functions have signatures.
     if (doc.type === "TypedefDoc" && doc.of && type.names &&
           type.names.length) {
@@ -29,64 +32,74 @@ export function needsSignature(doc: any /*: Doc */) {
       }
     }*/
 
-  return false;
+    return false;
 }
 
 export const SignatureBuilder = {
-  appendParameters(doc: any /*: Doc */) {
-    const params = doc.params;
+    appendParameters(doc: any /* : Doc */)
+    {
+        const params = doc.params;
 
-    if (!params) {
-      return;
-    }
-
-    const paramTypes = params
-      .filter(
-        (param: any) => param.identifier && !param.identifier.includes(".")
-      )
-      .map((item: any) => {
-        let itemName = item.identifier || "";
-
-        if (item.variadic) {
-          itemName = `&hellip;${itemName}`;
+        if (!params)
+        {
+            return;
         }
 
-        return itemName;
-      });
+        const paramTypes = params
+            .filter(
+                (param: any) =>
+                    param.identifier && !param.identifier.includes('.')
+            )
+            .map((item: any) =>
+            {
+                let itemName = item.identifier || '';
 
-    let paramTypesString = "";
+                if (item.variadic)
+                {
+                    itemName = `&hellip;${itemName}`;
+                }
 
-    if (paramTypes.length) {
-      paramTypesString = paramTypes.join(", ");
-    }
+                return itemName;
+            });
 
-    doc.signature = `${doc.signature || ""}(${paramTypesString})`;
-  },
-  appendReturns(doc: any /*: Doc */) {
-    const returns = doc.returns || doc.yields;
+        let paramTypesString = '';
 
-    if (!returns) {
-      return;
-    }
+        if (paramTypes.length)
+        {
+            paramTypesString = paramTypes.join(', ');
+        }
 
-    let returnTypes = [];
-    let returnTypesString = "";
+        doc.signature = `${doc.signature || ''}(${paramTypesString})`;
+    },
+    appendReturns(doc: any /* : Doc */)
+    {
+        const returns = doc.returns || doc.yields;
 
-    returnTypes = returns.map((ret: any) => linkTo(ret.dataType));
+        if (!returns)
+        {
+            return;
+        }
 
-    if (returnTypes.length) {
-      returnTypesString = ` ${returnTypes.join("|")}`;
-    }
+        let returnTypes = [];
+        let returnTypesString = '';
 
-    doc.signature =
-      `<span class="signature">${doc.signature || ""}</span>` +
-      `<span class="type-signature">${returnTypesString}</span>`;
-  },
-  appendType(doc: any /*: Doc */) {
-    const types = doc.dataType ? linkTo(doc.dataType) : "";
+        returnTypes = returns.map((ret: any) => linkTo(ret.dataType));
 
-    doc.signature = `${
-      doc.signature || ""
-    }<span class="type-signature">${types}</span>`;
-  },
+        if (returnTypes.length)
+        {
+            returnTypesString = ` ${returnTypes.join('|')}`;
+        }
+
+        doc.signature
+            = `<span class="signature">${doc.signature || ''}</span>`
+            + `<span class="type-signature">${returnTypesString}</span>`;
+    },
+    appendType(doc: any /* : Doc */)
+    {
+        const types = doc.dataType ? linkTo(doc.dataType) : '';
+
+        doc.signature = `${
+            doc.signature || ''
+        }<span class="type-signature">${types}</span>`;
+    },
 };
