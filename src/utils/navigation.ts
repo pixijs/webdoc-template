@@ -1,88 +1,95 @@
-import {each} from "lodash";
+import { each } from 'lodash';
 
-class Navigable {
-  type: "class" | "global" | "namespace";
-  name: string;
-  path: string;
-  deprecated: boolean;
-  classes: any[]; // ClassDoc[]
-  members: any[];
-  methods: any[]; // MethodDoc[]
-  events: any[]; // EventDoc[]
-  interfaces: any[]; // InterfaceDoc[]
-  enums: any[]; // EnumDoc[]
-  typedefs: any[]; // TypedefDoc[]
-  tutorials: any[]; // TutorialDoc[]
+class Navigable
+{
+    type: 'class' | 'global' | 'namespace';
+    name: string;
+    path: string;
+    deprecated: boolean;
+    classes: any[]; // ClassDoc[]
+    members: any[];
+    methods: any[]; // MethodDoc[]
+    events: any[]; // EventDoc[]
+    interfaces: any[]; // InterfaceDoc[]
+    enums: any[]; // EnumDoc[]
+    typedefs: any[]; // TypedefDoc[]
+    tutorials: any[]; // TutorialDoc[]
 
-  constructor(
-    doc: any /*{ name: string, path: string, deprecated: boolean, members: any[] }*/,
-    type: any, /*"class" | "namespace"*/
-  ) {
-    this.type = type;
-    this.name = doc.name;
-    this.path = doc.path;
-    this.deprecated = doc.deprecated;
+    constructor(
+        doc: any /* { name: string, path: string, deprecated: boolean, members: any[] }*/,
+        type: any, /* "class" | "namespace"*/
+    )
+    {
+        this.type = type;
+        this.name = doc.name;
+        this.path = doc.path;
+        this.deprecated = doc.deprecated;
 
-    this.classes = [];
-    this.members = [];
-    this.methods = [];
-    this.events = [];
-    this.interfaces = [];
-    this.enums = [];
-    this.typedefs = [];
-    this.tutorials = [];
+        this.classes = [];
+        this.members = [];
+        this.methods = [];
+        this.events = [];
+        this.interfaces = [];
+        this.enums = [];
+        this.typedefs = [];
+        this.tutorials = [];
 
-    // Loop through all the members and push them into the appropriate category.
-    doc.members.forEach((child: any) => {
-      if (child.access === "private" || child.undocumented) {
-        return;
-      }
+        // Loop through all the members and push them into the appropriate category.
+        doc.members.forEach((child: any) =>
+        {
+            if (child.access === 'private' || child.undocumented)
+            {
+                return;
+            }
 
-      switch (child.type) {
-      case "ClassDoc":
-        this.classes.push(child);
-        break;
-      case "NSDoc":
-        break;
-      case "PropertyDoc":
-        this.members.push(child);
-        break;
-      case "MethodDoc":
-      case "FunctionDoc":
-        if (child.name !== "constructor") {
-          this.methods.push(child);
-        }
-        break;
-      case "EventDoc":
-        this.events.push(child);
-        break;
-      case "InterfaceDoc":
-        this.interfaces.push(child);
-        break;
-      case "EnumDoc":
-        this.enums.push(child);
-        break;
-      case "TypedefDoc":
-        this.typedefs.push(child);
-        break;
-      case "TutorialDoc":
-        this.tutorials.push(child);
-        break;
-      default:
-        console.log("Unknown doc-type " + child.type);
-      }
-    });
-  }
+            switch (child.type)
+            {
+                case 'ClassDoc':
+                    this.classes.push(child);
+                    break;
+                case 'NSDoc':
+                    break;
+                case 'PropertyDoc':
+                    this.members.push(child);
+                    break;
+                case 'MethodDoc':
+                case 'FunctionDoc':
+                    if (child.name !== 'constructor')
+                    {
+                        this.methods.push(child);
+                    }
+                    break;
+                case 'EventDoc':
+                    this.events.push(child);
+                    break;
+                case 'InterfaceDoc':
+                    this.interfaces.push(child);
+                    break;
+                case 'EnumDoc':
+                    this.enums.push(child);
+                    break;
+                case 'TypedefDoc':
+                    this.typedefs.push(child);
+                    break;
+                case 'TutorialDoc':
+                    this.tutorials.push(child);
+                    break;
+                default:
+                    console.log(`Unknown doc-type ${child.type}`);
+            }
+        });
+    }
 }
 
 /**
  * Creates a list of "navigable" entries that are fed into navigation.tmpl
  * to generate the main navigation bar.
  */
-export function buildNavigation(members: any) {
-  const nav = [];
+export function buildNavigation(members: any)
+{
+    const nav = [];
 
-  /*
+    /*
   if (members.modules.length) {
       each(members.modules, function (v) {
           nav.push({
@@ -119,39 +126,44 @@ export function buildNavigation(members: any) {
   }
   */
 
-  if (members.namespaces.length) {
-    each(members.namespaces, function(nsDoc: any) {
-      nav.push(new Navigable(nsDoc, "namespace"));
-    });
-  }
-
-  if (members.globals.length) {
-    nav.push(
-      new Navigable(
+    if (members.namespaces.length)
+    {
+        each(members.namespaces, (nsDoc: any) =>
         {
-          type: "NSDoc",
-          name: "globals",
-          path: "globals",
-          members: members.globals,
-        },
-        "namespace",
-      ),
-    );
-  }
+            nav.push(new Navigable(nsDoc, 'namespace'));
+        });
+    }
 
-  if (members.classes.length) {
-    each(members.classes, (classDoc: any) => {
-      nav.push(new Navigable(classDoc, "class"));
-    });
-  }
+    if (members.globals.length)
+    {
+        nav.push(
+            new Navigable(
+                {
+                    type: 'NSDoc',
+                    name: 'globals',
+                    path: 'globals',
+                    members: members.globals,
+                },
+                'namespace',
+            ),
+        );
+    }
 
-  // if (members.tutorials.length) {
-  //   each(members.tutorials, function(v: any) {
-  //     nav.push(new Navigable(tutorialDoc, "tutorial"));
-  //   });
-  // }
+    if (members.classes.length)
+    {
+        each(members.classes, (classDoc: any) =>
+        {
+            nav.push(new Navigable(classDoc, 'class'));
+        });
+    }
 
-  return nav;
+    // if (members.tutorials.length) {
+    //   each(members.tutorials, function(v: any) {
+    //     nav.push(new Navigable(tutorialDoc, "tutorial"));
+    //   });
+    // }
+
+    return nav;
 }
 
 // const hasOwnProp = Object.prototype.hasOwnProperty;
