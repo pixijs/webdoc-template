@@ -1,0 +1,27 @@
+name: Build
+on:
+    push:
+        branches: ['**']
+    release:
+        types: [published]
+    pull_request:
+        branches: ['**']
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js 18.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+                  cache: 'npm'
+            - name: Install Dependencies
+              run: npm ci
+            - name: Build
+              run: npm run build
+            - name: Publish Release
+              if: github.event_name == 'release'
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

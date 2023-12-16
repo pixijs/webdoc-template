@@ -11,7 +11,7 @@
     "lint": "eslint src --ext .ts --max-warnings 0",
     "types": "tsc",
     "postversion": "git push && git push --tags",
-    "prepack": "npm run build && clean-package",
+    "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
   "repository": {
@@ -35,7 +35,6 @@
   "homepage": "https://github.com/pixijs/webdoc-template#readme",
   "files": [
     "publish.js",
-    "helper.js",
     "static",
     "tmpl"
   ],
