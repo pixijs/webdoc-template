@@ -1,4 +1,4 @@
-import { linkTo } from "./helper";
+import {linkTo} from "./helper";
 
 /*::
 type Signature = {
@@ -42,7 +42,7 @@ export const SignatureBuilder = {
 
     const paramTypes = params
       .filter(
-        (param: any) => param.identifier && !param.identifier.includes(".")
+        (param: any) => param.identifier && !param.identifier.includes("."),
       )
       .map((item: any) => {
         let itemName = item.identifier || "";

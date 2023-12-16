@@ -15,10 +15,10 @@ function highlight(anchor: JQuery<HTMLAnchorElement>, textToHighlight: string) {
     const beforeMatch = originalText.slice(0, indexOfMatch);
     const matchText = originalText.slice(
       indexOfMatch,
-      indexOfMatch + textToHighlight.length
+      indexOfMatch + textToHighlight.length,
     );
     const afterMatch = originalText.slice(
-      indexOfMatch + textToHighlight.length
+      indexOfMatch + textToHighlight.length,
     );
 
     // Create a new HTML string with the match wrapped in a span
@@ -40,12 +40,13 @@ $(() => {
     .replace(/\.[a-z]+$/, "");
 
   // Directly matching the filename and the top-level item's data-name attribute.
-  let $currentItem = $nav.find('.item[data-name="' + filename + '"]:eq(0)');
+  let $currentItem = $nav.find(".item[data-name=\"" + filename + "\"]:eq(0)");
 
-  // Fallback to default querying for the likes of interfaces which doesn't have its own top-level navigation item.
+  // Fallback to default querying for the likes of interfaces which doesn't
+  // have its own top-level navigation item.
   if (!$currentItem.length) {
     $currentItem = $nav
-      .find('a[href*="' + filename + '"]:eq(0)')
+      .find("a[href*=\"" + filename + "\"]:eq(0)")
       .closest(".item");
   }
 
@@ -102,7 +103,7 @@ $(() => {
 
             // Highlight the nested title element for the top-level item
             const $title = $(
-              $item.find(".title > a").first()
+              $item.find(".title > a").first(),
             ) as JQuery<HTMLAnchorElement>;
             $title.addClass("highlight");
             highlight($title, value);
@@ -142,19 +143,19 @@ $(() => {
     $list.scrollTop(0);
   });
 
-  $("#menuToggle").click(function () {
+  $("#menuToggle").click(function() {
     $list.toggleClass("show");
     $search.toggleClass("show");
   });
 
   // disqus code
   if (config.disqus) {
-    $(window).on("load", function () {
-      const disqus_shortname = config.disqus; // required: replace example with your forum shortname
+    $(window).on("load", function() {
+      const disqusShortname = config.disqus; // required: replace example with your forum shortname
       const dsq = document.createElement("script");
       dsq.type = "text/javascript";
       dsq.async = true;
-      dsq.src = "http://" + disqus_shortname + ".disqus.com/embed.js";
+      dsq.src = "http://" + disqusShortname + ".disqus.com/embed.js";
       (
         document.getElementsByTagName("head")[0] ||
         document.getElementsByTagName("body")[0]
@@ -162,7 +163,7 @@ $(() => {
       const s = document.createElement("script");
       s.async = true;
       s.type = "text/javascript";
-      s.src = "http://" + disqus_shortname + ".disqus.com/count.js";
+      s.src = "http://" + disqusShortname + ".disqus.com/count.js";
       document.getElementsByTagName("BODY")[0].appendChild(s);
     });
   }

@@ -1,7 +1,7 @@
-import { initLogger } from "./logs";
+import {initLogger} from "./logs";
 
-const { isDataType, query } = require("@webdoc/model");
-const { LinkerPlugin, TemplateRenderer } = require("@webdoc/template-library");
+const {isDataType, query} = require("@webdoc/model");
+const {LinkerPlugin, TemplateRenderer} = require("@webdoc/template-library");
 
 function removeParentalPrefix(symbolPath: string) {
   return symbolPath.replace(/.*[.#](.*)$/, "$1");
@@ -42,7 +42,7 @@ export function overrideLinkerPlugin() {
   const stringifyType = (
     parsedType: any,
     cssClass: any,
-    stringifyLinkMap: any
+    stringifyLinkMap: any,
   ) => {
     return catharsis.stringify(parsedType, {
       cssClass: cssClass,
@@ -88,19 +88,19 @@ export function overrideLinkerPlugin() {
       if (line[0] === "}") {
         indentation -= 1;
       }
-      return i === 0
-        ? line
-        : "&nbsp;".repeat(indentation * indentSize) +
+      return i === 0 ?
+        line :
+        "&nbsp;".repeat(indentation * indentSize) +
             line.trim().replace(/\s+:/g, ":");
     });
 
     return lines.join("<br/>");
   };
 
-  LinkerPlugin.prototype.linkTo = function (
+  LinkerPlugin.prototype.linkTo = function(
     docPath: any,
     linkText = docPath,
-    options: Record<string, any> = {}
+    options: Record<string, any> = {},
   ) {
     if (!options) {
       options = {};
@@ -112,7 +112,7 @@ export function overrideLinkerPlugin() {
 
     if (this.queryCache.has(docPath)) {
       return `<a href=${encodeURI(
-        this.queryCache.get(docPath) || ""
+        this.queryCache.get(docPath) || "",
       )}>${linkText}</a>`;
     }
 
@@ -132,7 +132,7 @@ export function overrideLinkerPlugin() {
 
         link = link.replace(
           `%${i}`,
-          this.linkTo(docPath[i], docPath[i], options)
+          this.linkTo(docPath[i], docPath[i], options),
         );
       }
 
@@ -142,7 +142,7 @@ export function overrideLinkerPlugin() {
 
       return link.replace(
         /\b(\w+\??)(?=\s*:)/g,
-        '<span class="hljs-attr">$1</span>'
+        "<span class=\"hljs-attr\">$1</span>",
       );
     } else if (typeof docPath !== "string") {
       docPath = docPath.path;
@@ -172,7 +172,7 @@ export function overrideLinkerPlugin() {
       return stringifyType(
         parsedType,
         options.cssClass,
-        mapToLinks(this.documentRegistry)
+        mapToLinks(this.documentRegistry),
       );
     } else {
       const doc = query(docPath, this.renderer.docTree)[0];
@@ -191,7 +191,7 @@ export function overrideLinkerPlugin() {
           const doc = query(docPath, externalInterface.root)[0];
 
           if (doc) {
-            const { uri } = this.getDocumentRecord(doc.id);
+            const {uri} = this.getDocumentRecord(doc.id);
 
             if (uri) {
               fileUrl = uri;
@@ -214,7 +214,7 @@ export function overrideLinkerPlugin() {
       return text;
     } else {
       return `<a href="${encodeURI(
-        fileUrl + fragmentString
+        fileUrl + fragmentString,
       )}"${classString}>${text}</a>`;
     }
   };
@@ -227,7 +227,7 @@ export function overrideTemplateRenderer() {
   let randomDice = 0;
 
   TemplateRenderer.prototype.toHtmlSafe = toHtmlSafeString;
-  TemplateRenderer.prototype.resolveDocLink = function (docLink: any) {
+  TemplateRenderer.prototype.resolveDocLink = function(docLink: any) {
     if (typeof docLink === "string") {
       return this.linkTo(docLink, docLink);
     }
