@@ -174,8 +174,6 @@ export function overrideLinkerPlugin()
 
         if (linkText && typeof linkText !== 'string')
         {
-            console.log('linkText:', linkText.name);
-
             linkText = linkText.name;
         }
 
