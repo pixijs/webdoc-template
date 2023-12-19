@@ -58,8 +58,6 @@
 
     .class-description {
       padding-top: 10px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #c8c9cc;
     }
 
     ol,
@@ -71,10 +69,12 @@
       margin-inline-start: 0px;
       margin-inline-end: 0px;
       padding-inline-start: 40px;
+      margin: 0;
 
       & > li {
         position: relative;
         margin: 15px 0;
+        margin: 0;
 
         &::before {
           position: absolute;
@@ -131,6 +131,8 @@
         font-size: 19px;
         font-weight: 700;
         color: #e91e63;
+        cursor: pointer;
+        user-select: none;
 
         & + * {
           margin-top: 25px;
