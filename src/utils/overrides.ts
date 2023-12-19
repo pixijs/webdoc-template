@@ -131,7 +131,7 @@ export function overrideLinkerPlugin()
         {
             return `<a href=${encodeURI(
                 this.queryCache.get(docPath) || ''
-            )}>${linkText}</a>`;
+            )}>${removeParentalPrefix(linkText)}</a>`;
         }
 
         if (isDataType(docPath))
