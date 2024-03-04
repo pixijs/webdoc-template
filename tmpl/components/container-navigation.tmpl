@@ -16,9 +16,8 @@ var canStyleAsNamespace = function(item) {
     <?js
     const process = (item) => {
         const isNamespace = canStyleAsNamespace(item);
-        const isNamespaceItem = item.path.includes(".");
     ?>
-        <li class="item <?js= isNamespaceItem ? 'namespaceItem' : ''?>" data-name="<?js= (item.type === 'tutorial' ? 'tutorial-' : '') + item.path ?>">
+        <li class="item <?js= !isNamespace ? 'namespaceItem' : ''?>" data-name="<?js= (item.type === 'tutorial' ? 'tutorial-' : '') + item.path ?>">
             <span class="title <?js if (isNamespace) { ?>namespace<?js } ?> <?js if (item.deprecated) { ?>status-deprecated<?js } ?>">
                 <?js if (isNamespace) { ?>
                 <span class="namespaceTag">

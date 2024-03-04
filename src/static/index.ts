@@ -56,8 +56,8 @@ $(() =>
 
     if ($currentItem.length)
     {
-    // if a child then show the top level parent and highlight the
-    // current item.
+        // if a child then show the top level parent and highlight the
+        // current item.
         if ($currentItem.parents('.children').length)
         {
             $currentItem.addClass('current');
@@ -65,14 +65,55 @@ $(() =>
             $currentItem.find('li.item').addClass('notCurrent');
             $currentItem = $currentItem.parents('ul.list>li.item');
         }
-        $currentItem.remove().prependTo($list).addClass('current');
+        $currentItem.addClass('current');
     }
 
     const $search = $('.search');
     const $items = $nav.find('.item');
 
-    // Store the original ordering of the items
-    const originalOrder = $items.toArray();
+    // Store the original ordering of the items with the namespace items sorted alphabetically.
+    const originalOrder = $items.toArray().sort((a, b) =>
+    {
+        const isACurrent = a.classList.contains('current');
+        const isBCurrent = b.classList.contains('current');
+
+        // 'current' or active item should come first.
+        if (isACurrent && !isBCurrent)
+        {
+            return -1;
+        }
+        else if (!isACurrent && isBCurrent)
+        {
+            return 1;
+        }
+
+        // Sort the namespace items alphabetically.
+        const isANamespaceItem = a.classList.contains('namespaceItem');
+        const isBNamespaceItem = b.classList.contains('namespaceItem');
+
+        if (isANamespaceItem && isBNamespaceItem)
+        {
+            const nameA = a.getAttribute('data-name')?.split('.').pop() ?? '';
+            const nameB = b.getAttribute('data-name')?.split('.').pop() ?? '';
+
+            return nameA.localeCompare(nameB);
+        }
+        // Prioritize namespace items.
+        else if (isANamespaceItem)
+        {
+            return 1;
+        }
+        else if (isBNamespaceItem)
+        {
+            return -1;
+        }
+
+        return 0;
+    });
+
+    // Apply the sorted original order.
+    $('.list').empty().append(originalOrder);
+
     const searchInput = document.getElementById('search') as HTMLInputElement;
 
     // Search input
